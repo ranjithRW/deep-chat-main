@@ -1,0 +1,107 @@
+---
+sidebar_position: 6
+---
+
+# Cohere
+
+import cohereLogo from '/img/cohereLogo.png';
+
+# <img src={cohereLogo} width="60" style={{float: 'left'}} /><span className="direct-service-title">Cohere</span>
+
+Properties used to connect to [Cohere](https://docs.cohere.com/docs).
+
+### `cohere` {#cohere}
+
+- Type: `true` | \{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `model?: string`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `temperature?: number`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `prompt_truncation?:` `"AUTO"` | `"OFF"`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `connectors?:` `{id: string}[]`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `documents?:` `{title: string; snippet: string}[]` <br />
+  \}
+- Default: _\{model: "command-a-03-2025"\}_
+
+import ContainersKeyToggle from '@site/src/components/table/containersKeyToggle';
+import ComponentContainer from '@site/src/components/table/componentContainer';
+import DeepChatBrowser from '@site/src/components/table/deepChatBrowser';
+import LineBreak from '@site/src/components/markdown/lineBreak';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+<BrowserOnly>{() => require('@site/src/components/nav/autoNavToggle').readdAutoNavShadowToggle()}</BrowserOnly>
+
+Connect to Cohere's [Chat API](https://docs.cohere.com/v2/reference/chat). You can set this property to _true_ or configure it using an object:<br />
+`model` is the name of the Cohere model to be used by the API. <br />
+`temperature` is the degree of the response randomness. <br />
+`prompt_truncation` dictates how the prompt will be constructed. Default is _"OFF"_ which uses all resources. _"AUTO"_ drops some chat history and documents to construct a prompt that fits within the model's context length limit. <br />
+`connectors` is an array of objects that define custom connectors. <br />
+`documents` is an array of objects that define relevant documents which the model can use to enrich its reply. See [Document Mode](https://docs.cohere.com/docs/retrieval-augmented-generation-rag#document-mode) for more info. <br />
+
+#### Example
+
+<ContainersKeyToggle>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        cohere: {
+          key: 'placeholder key',
+          temperature: 0.7,
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        cohere: {
+          temperature: 0.7,
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+</ContainersKeyToggle>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  directConnection='{
+    "cohere": {
+      "key": "placeholder key",
+      "temperature": 0.7
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  directConnection='{
+    "cohere": {
+      "key": "placeholder key",
+      "temperature": 0.7
+    }
+  }'
+  style="border-radius: 8px"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+:::info
+Use [`stream`](/docs/connect#Stream) to stream the AI responses.
+:::
+
+<LineBreak></LineBreak>

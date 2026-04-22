@@ -1,0 +1,54 @@
+import {FileAttachmentsType} from '../../fileAttachments/fileAttachmentTypes/fileAttachmentsType';
+import {CLASS_LIST, CREATE_ELEMENT} from '../../../../../utils/consts/htmlConstants';
+import {GenericInputButtonStyles} from '../../../../../types/genericInputButton';
+import {DefinedButtonStateStyles} from '../../../../../types/buttonInternal';
+import {FILES, TEXT} from '../../../../../utils/consts/messageConstants';
+import {ElementUtils} from '../../../../../utils/element/elementUtils';
+import {CameraModal} from '../../fileAttachments/modal/cameraModal';
+import {CAMERA_ICON_STRING} from '../../../../../icons/cameraIcon';
+import {STYLES} from '../../../../../utils/consts/inputConstants';
+import {ServiceIO} from '../../../../../services/serviceIO';
+import {ButtonPosition} from '../../../../../types/button';
+import {Legacy} from '../../../../../utils/legacy/legacy';
+import {CameraFiles} from '../../../../../types/camera';
+import {CustomStyle} from '../../../../../types/styles';
+import {TooltipUtils} from '../tooltip/tooltipUtils';
+import {InputButton} from '../inputButton';
+
+type Styles = DefinedButtonStateStyles<GenericInputButtonStyles>;
+
+export class CameraButton extends InputButton<Styles> {
+  constructor(containerElement: HTMLElement, fileAttachmentsType: FileAttachmentsType, fileService: ServiceIO['camera']) {
+    const buttonPosition = Legacy.processPosition<ButtonPosition>(fileService?.button?.position);
+    const dropupText = fileService?.button?.[STYLES]?.[TEXT]?.content || 'Photo';
+    const tooltip = TooltipUtils.tryCreateConfig('Camera', fileService?.button?.tooltip);
+    const styles = (fileService?.button?.[STYLES] as Styles) || {};
+    super(CameraButton.createButtonElement(), CAMERA_ICON_STRING, buttonPosition, tooltip, styles, dropupText);
+    const innerElements = this.createInnerElementsForStates(this.customStyles);
+    if (fileService) {
+      this.addClickEvent(containerElement, fileAttachmentsType, fileService.modalContainerStyle, fileService[FILES]);
+    }
+    this.changeElementsByState(innerElements[STYLES]);
+    this.reapplyStateStyle(STYLES);
+  }
+
+  private createInnerElementsForStates(customStyles?: Styles) {
+    return {
+      [STYLES]: this.createInnerElements('camera-icon', STYLES, customStyles),
+    };
+  }
+
+  private static createButtonElement() {
+    const buttonElement = CREATE_ELEMENT();
+    buttonElement[CLASS_LIST].add('input-button');
+    return buttonElement;
+  }
+
+  // prettier-ignore
+  private addClickEvent(containerElement: HTMLElement, fileAttachmentsType: FileAttachmentsType,
+      modalContainerStyle?: CustomStyle, cameraFiles?: CameraFiles) {
+    const openModalFunc = CameraModal.createCameraModalFunc(
+      containerElement, fileAttachmentsType, modalContainerStyle, cameraFiles);
+    ElementUtils.assignButtonEvents(this.elementRef, openModalFunc);
+  }
+}

@@ -1,0 +1,464 @@
+---
+sidebar_position: 3
+---
+
+# Azure
+
+import azureLogo from '/img/azureLogo.png';
+
+# <img src={azureLogo} width="48" style={{float: 'left', marginTop: '8px', marginRight: '10px'}} /><span className="direct-service-title">Azure</span>
+
+Properties used to connect to [Azure Cognitive Services](https://learn.microsoft.com/en-gb/azure/cognitive-services/).
+
+### `azure` {#azure}
+
+- Type: \{ <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`textToSpeech?: TextToSpeech`](#TextToSpeech), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`speechToText?: SpeechToText`](#SpeechToText), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`summarization?: Summarization`](#Summarization), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`translation?: Translation`](#Translation),<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`openAI?: OpenAI`](#OpenAI)<br />
+  \}
+
+import ContainersKeyToggle from '@site/src/components/table/containersKeyToggle';
+import ComponentContainer from '@site/src/components/table/componentContainer';
+import DeepChatBrowser from '@site/src/components/table/deepChatBrowser';
+import LineBreak from '@site/src/components/markdown/lineBreak';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+<BrowserOnly>{() => require('@site/src/components/nav/autoNavToggle').readdAutoNavShadowToggle()}</BrowserOnly>
+
+## Service Types
+
+### `TextToSpeech` {#TextToSpeech}
+
+- Type: \{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `region: string`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `lang?: string`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `name?: string` <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `gender?: string`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `outputFormat?: string` <br />
+  \}
+
+- Default: _\{lang: "en-US", name: "en-US-JennyNeural", gender: "Female", outputFormat: "audio-16khz-128kbitrate-mono-mp3"\}_
+
+Connect to Azure's [Text to Speech API](https://learn.microsoft.com/en-GB/azure/cognitive-services/speech-service/rest-text-to-speech?tabs=streaming#convert-text-to-speech). <br />
+`region` is a required string property to denote the region of your speech service, e.g. _"eastus"_. <br />
+`lang` is the locale (BCP-47) string code for the language of the audio output. See [here](https://learn.microsoft.com/en-GB/azure/cognitive-services/speech-service/language-support?tabs=tts) for available options. <br />
+`name` is the name of the voice used for the audio output. See [here](https://learn.microsoft.com/en-GB/azure/cognitive-services/speech-service/language-support?tabs=tts) for available options. <br />
+`gender` is the gender of the audio output voice. E.g. _"Female"_ or _"Male"_. <br />
+`outputFormat` is the output audio format. See [here](https://learn.microsoft.com/en-GB/azure/cognitive-services/speech-service/rest-text-to-speech?tabs=streaming#audio-outputs) for available options. <br />
+
+#### Example
+
+<ContainersKeyToggle>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        azure: {
+          key: 'placeholder key',
+          textToSpeech: {region: 'eastus'},
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        azure: {
+          textToSpeech: {region: 'eastus'},
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+</ContainersKeyToggle>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "textToSpeech": {"region": "eastus"}
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "textToSpeech": {"region": "eastus"}
+    }
+  }'
+  style="border-radius: 8px"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `SpeechToText` {#SpeechToText}
+
+- Type: \{`region: string`, `lang?: string`\}
+- Default: _\{lang: "en-US"\}_
+
+Connect to Azure's [Speech to Text API](https://learn.microsoft.com/en-gb/azure/cognitive-services/speech-service/rest-speech-to-text). <br />
+`region` is a required string property to denote the region of your speech service, e.g. _"eastus"_. <br />
+`lang` is the locale (BCP-47) string code for the language of the input output. See [here](https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt) for available options. <br />
+
+#### Example
+
+<ContainersKeyToggle>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        azure: {
+          key: 'placeholder key',
+          speechToText: {region: 'eastus'},
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        azure: {
+          speechToText: {region: 'eastus'},
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+</ContainersKeyToggle>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "speechToText": {"region": "eastus"}
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "speechToText": {"region": "eastus"}
+    }
+  }'
+  style="border-radius: 8px"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `Summarization` {#Summarization}
+
+- Type: \{`endpoint: string`, `language?: string`\}
+- Default: _\{language: "en"\}_
+
+Connect to Azure's [Summarization API](https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/summarization/overview?tabs=document-summarization). Please read [here](https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/summarization/quickstart?tabs=document-summarization%2Cwindows&pivots=rest-api) how to generate a language service. <br />
+`endpoint` is the full endpoint for your generated language service. <br />
+`language` is a [BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag#:~:text=An%20IETF%20BCP%2047%20language,the%20IANA%20Language%20Subtag%20Registry.) for the language of your text. <br />
+
+#### Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    directConnection={{
+      azure: {
+        key: 'placeholder name',
+        summarization: {endpoint: 'https://placeholderresource.cognitiveservices.azure.com'},
+      },
+    }}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+:::caution
+Cannot input a test key as user's language service `endpoint` is required.
+:::
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "summarization": {"endpoint": "https://placeholderresource.cognitiveservices.azure.com"}
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "summarization": {"endpoint": "https://placeholderresource.cognitiveservices.azure.com"}
+    }
+  }'
+  style="border-radius: 8px"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `Translation` {#Translation}
+
+- Type: \{`region?: string`, `language?: string`\}
+- Default: _\{language: "es"\}_
+
+Connect to Azure's [Translation API](https://learn.microsoft.com/en-gb/azure/cognitive-services/translator/reference/v3-0-reference). <br />
+`region` is the region of your translator resource. This is optional if your resource is global. <br />
+`language` is the [BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag#:~:text=An%20IETF%20BCP%2047%20language,the%20IANA%20Language%20Subtag%20Registry.) for the language you are translating to from English. <br />
+
+#### Example
+
+<ContainersKeyToggle>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        azure: {
+          key: 'placeholder key',
+          translation: {region: 'eastus', language: 'ja'},
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        azure: {
+          translation: {region: 'eastus', language: 'ja'},
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+</ContainersKeyToggle>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "translation": {"region": "eastus", "language": "ja"}
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "translation": {"region": "eastus", "language": "ja"}
+    }
+  }'
+  style="border-radius: 8px"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `OpenAI` {#OpenAI}
+
+- Type: \{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `urlDetails:` \{`endpoint: string`, `version: string`, `deploymentId: string`\}, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `chat?:` [`OpenAIChat`](/docs/directConnection/OpenAI/#Chat) & [`AzureDataSources`](#AzureDataSources), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`assistant?: OpenAIAssistant`](/docs/directConnection/OpenAI/#Assistant) <br />
+  \}
+
+Connect to the [Azure OpenAI's API](https://platform.openai.com/docs/api-reference/chat): <br />
+`urlDetails` is used to define the [_url parameters_](https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#uri-parameters) that will be used to connect to Azure.
+`endpoint` is a _url_ string for your OpenAI resource, `version` is the API version to be used and `deploymentId` is the deployment id of the model. <br />
+`chat` defines whether to connect to the [Chat Completions](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/chatgpt) API.
+It uses [OpenAI Chat](/docs/directConnection/OpenAI/#Chat) and [AzureDataSources](#AzureDataSources) types. <br />
+`assistant` defines whether to connect to the [Assistant](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/assistant) API.
+It uses the same type as the [OpenAI Assistant](/docs/directConnection/OpenAI/#Assistant) property. <br />
+
+#### Example
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "openAI": {
+        "urlDetails": {
+          "endpoint": "https://your-endpoint.com",
+          "version": "2024-10-21",
+          "deploymentId": "123123"
+        },
+        "chat": true
+      }
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "openAI": {
+        "urlDetails": {
+          "endpoint": "https://your-endpoint.com",
+          "version": "2024-10-21",
+          "deploymentId": "123123"
+        },
+        "chat": true
+      }
+    }
+  }'
+  style="border-radius: 8px"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `AzureDataSources` {#AzureDataSources}
+
+- Type: \{`data_sources?`: [\{`type: string`, `parameters?: object`\}]\}
+
+The configuration entries for Azure OpenAI On Your Data, more information can be found [here](https://learn.microsoft.com/en-gb/azure/ai-services/openai/references/on-your-data?tabs=python#request-body). <br />
+Currently only one object in the array is allowed. <br />
+`type` is the data source type. <br />
+`parameters` is the configuration required to connect to the data source. <br />
+
+#### Example
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "openAI": {
+        "urlDetails": {
+          "endpoint": "https://your-endpoint.com",
+          "version": "2024-10-21",
+          "deploymentId": "123123"
+        },
+        "chat": {
+          "data_sources": [
+            {
+              "type": "azure_search",
+              "parameters": {
+                "endpoint": "endpoint",
+                "index_name": "vector-14848022002",
+                "authentication": {
+                  "type": "system_assigned_managed_identity"
+              }}}
+          ]
+        }}}}'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  directConnection='{
+    "azure": {
+      "key": "placeholder key",
+      "openAI": {
+        "urlDetails": {
+          "endpoint": "https://your-endpoint.com",
+          "version": "2024-10-21",
+          "deploymentId": "123123"
+        },
+        "chat": {
+          "data_sources": [
+            {
+              "type": "azure_search",
+              "parameters": {
+                "endpoint": "endpoint",
+                "index_name": "vector-14848022002",
+                "authentication": {
+                  "type": "system_assigned_managed_identity"
+              }}}
+          ]
+        }}}}'
+  style="border-radius: 8px"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>

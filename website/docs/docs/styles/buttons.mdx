@@ -1,0 +1,1483 @@
+---
+sidebar_position: 1
+---
+
+# Buttons
+
+Properties related to button styling.
+
+import ComponentContainerMethods from '@site/src/components/table/componentContainerMethods';
+import ComponentContainer from '@site/src/components/table/componentContainer';
+import DeepChatBrowser from '@site/src/components/table/deepChatBrowser';
+import LineBreak from '@site/src/components/markdown/lineBreak';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+<BrowserOnly>{() => require('@site/src/components/nav/autoNavToggle').readdAutoNavShadowToggle()}</BrowserOnly>
+
+### `customButtons` {#customButtons}
+
+- Type: \{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `styles?:` \{[`button?: CustomButtonStyles`](#CustomButtonStyles), [`dropup?: CustomDropupItemStyles`](#CustomDropupItemStyles)\}, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`position?: ButtonPosition`](#ButtonPosition), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`tooltip?: Tooltip`](#Tooltip), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`initialState?: CustomButtonState`](#CustomButtonState), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`setState?: SetCustomButtonState`](#SetCustomButtonState), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`onClick?: OnClickCustomButton`](#OnClickCustomButton) <br />
+  \}[]
+
+Array defining object configs for custom buttons. <br />
+`styles` is used to define the styling options for [buttons](#CustomButtonStyles) and [dropup items](#CustomDropupItemStyles). <br />
+`position` is used to set the button location. <br />
+`tooltip` adds a tooltip to the button. <br />
+`initialState` is the initial button state when the chat loads. <br />
+`setState` is used to change the button state programmatically. <br />
+`onClick` is used to assign a function that is triggered when the button is clicked. <br />
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    customButtons={[
+      {
+        position: 'inside-start',
+        onClick: (state) => (state === 'active' ? 'default' : 'active'),
+        styles: {
+          button: {
+            default: {
+              container: {
+                default: {
+                  border: '1px solid #e2e2e2',
+                  borderRadius: '10px',
+                  marginBottom: '4px',
+                },
+              },
+              svg: {
+                content: `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 0 25 25" fill="none">
+                  <path d="M12 22.3201C17.5228 22.3201 22 17.8429 22 12.3201C22 6.79722 17.5228 2.32007 12 2.32007C6.47715 2.32007 2 6.79722 2 12.3201C2 17.8429 6.47715 22.3201 12 22.3201Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 12.3201H22" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12 22.3201C13.933 22.3201 15.5 17.8429 15.5 12.3201C15.5 6.79722 13.933 2.32007 12 2.32007C10.067 2.32007 8.5 6.79722 8.5 12.3201C8.5 17.8429 10.067 22.3201 12 22.3201Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>`,
+              },
+              text: {
+                content: 'Search',
+              },
+            },
+          },
+        },
+      },
+    ]}
+    textInput={{
+      styles: {
+        container: {
+          paddingBottom: '30px',
+        },
+        text: {
+          padding: '0.5rem 0.7rem',
+        },
+      },
+    }}
+    demo={true}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat customButtons="[{}]"></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  customButtons='[
+    {
+      "position": "inside-start",
+      "styles": {
+        "button": {
+          "default": {
+            "container": {
+              "default": {"border": "1px solid #e2e2e2", "borderRadius": "10px", "marginBottom": "4px"}
+            },
+            "svg": {
+              "content": "\n <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"-0.5 0 25 25\" fill=\"none\">\n <path d=\"M12 22.3201C17.5228 22.3201 22 17.8429 22 12.3201C22 6.79722 17.5228 2.32007 12 2.32007C6.47715 2.32007 2 6.79722 2 12.3201C2 17.8429 6.47715 22.3201 12 22.3201Z\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n <path d=\"M2 12.3201H22\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n <path d=\"M12 22.3201C13.933 22.3201 15.5 17.8429 15.5 12.3201C15.5 6.79722 13.933 2.32007 12 2.32007C10.067 2.32007 8.5 6.79722 8.5 12.3201C8.5 17.8429 10.067 22.3201 12 22.3201Z\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  </svg>"
+            },
+            "text": {
+              "content": "Search"
+            }}}}}
+  ]'
+  textInput='{
+    "styles": {
+      "container": {"paddingBottom": "30px"},
+      "text": {"padding": "0.5rem 0.7rem"}
+    }
+  }'
+  style="border-radius: 8px"
+  demo="true"
+></deep-chat>
+
+<!-- The onClick function can be constructed as follows -->
+const onClick = (state) => (state === 'active' ? 'default' : 'active')
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `submitButtonStyles` {#submitButtonStyles}
+
+- Type: \{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`submit?: ButtonStyles`](#ButtonStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`loading?: ButtonStyles`](#ButtonStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`stop?: ButtonStyles`](#ButtonStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`disabled?: ButtonStyles`](#ButtonStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `alwaysEnabled?: boolean`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`position?: ButtonPosition`](#ButtonPosition), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`tooltip?: Tooltip`](#Tooltip) <br />
+  \}
+
+Custom styling for the submit button. <br />
+`submit` state is displayed when the user's input is valid and can be sent. <br />
+`loading` is used when waiting for a message response from the target server. <br />
+`stop` is used when a message response is being [`streamed`](/docs/connect#Stream). <br />
+`disabled` is used when the user's input cannot be sent (see [`validateInput`](/docs/interceptors#validateInput)) or the [websocket](/docs/connect#Websocket) connection is not live.
+You can also set this state manually by calling the [`disableSubmitButton`](/docs/methods#disableSubmitButton) method. <br />
+`alwaysEnabled` prevents the `disabled` button state from being used. <br />
+`position` sets the button position within the input area. <br />
+`tooltip` adds a tooltip to the button.
+
+<LineBreak></LineBreak>
+
+:::info
+The `loading`, `stop` and `disabled` styles will automatically inherit your `submit` style `default` state values.
+:::
+
+<LineBreak></LineBreak>
+
+#### SVG Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    submitButtonStyles={{
+      alwaysEnabled: true,
+      submit: {
+        container: {
+          default: {
+            backgroundColor: '#e3f0ff',
+          },
+          hover: {backgroundColor: '#c6e1ff'},
+          click: {backgroundColor: '#acd3ff'},
+        },
+        svg: {
+          styles: {
+            default: {
+              filter:
+                'brightness(0) saturate(100%) invert(58%) sepia(53%) saturate(6828%) hue-rotate(214deg) brightness(100%) contrast(100%)',
+            },
+          },
+        },
+      },
+      position: 'outside-end',
+    }}
+    demo={true}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  submitButtonStyles='{
+    "submit": {
+      "container": {
+        "default": {"backgroundColor": "#e3f0ff"},
+        "hover": {"backgroundColor": "#c6e1ff"},
+        "click": {"backgroundColor": "#acd3ff"}
+      },
+      "svg": {
+        "styles": {
+          "default": {
+            "filter":
+              "brightness(0) saturate(100%) invert(58%) sepia(53%) saturate(6828%) hue-rotate(214deg) brightness(100%) contrast(100%)"
+          }
+        }
+      }
+    },
+    "alwaysEnabled": true,
+    "position": "outside-end"
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  submitButtonStyles='{
+    "submit": {
+      "container": {
+        "default": {"backgroundColor": "#e3f0ff"},
+        "hover": {"backgroundColor": "#c6e1ff"},
+        "click": {"backgroundColor": "#acd3ff"}
+      },
+      "svg": {
+        "styles": {
+          "default": {
+            "filter":
+              "brightness(0) saturate(100%) invert(58%) sepia(53%) saturate(6828%) hue-rotate(214deg) brightness(100%) contrast(100%)"
+          }
+        }
+      }
+    },
+    "alwaysEnabled": true,
+    "position": "outside-end"
+  }'
+  style="border-radius: 8px"
+  demo="true"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+#### Text Example
+
+It is important to note that the `submit` state's `default` properties are automatically copied into the other states,
+however `hover` and `submit` need to be defined.
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    textInput={{styles: {text: {paddingRight: '70px'}}}}
+    submitButtonStyles={{
+      alwaysEnabled: true,
+      submit: {
+        container: {
+          default: {backgroundColor: '#ddedff'},
+          hover: {backgroundColor: '#c6e1ff'},
+          click: {backgroundColor: '#acd3ff'},
+        },
+        text: {
+          content: 'Submit',
+          styles: {default: {color: '#6c6c6c'}, hover: {color: '#2c2c2c'}},
+        },
+        svg: {
+          content: '',
+        },
+      },
+      loading: {
+        text: {
+          content: 'Loading',
+        },
+        svg: {
+          content: '',
+        },
+      },
+      stop: {
+        container: {
+          hover: {backgroundColor: '#c6e1ff'},
+          click: {backgroundColor: '#acd3ff'},
+        },
+        text: {
+          content: 'Stop',
+        },
+        svg: {
+          content: '',
+        },
+      },
+    }}
+    connect={{stream: true}}
+    demo={true}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  submitButtonStyles='{
+    "submit": {
+      "container": {
+        "default": {"backgroundColor": "#ddedff"},
+        "hover": {"backgroundColor": "#c6e1ff"},
+        "click": {"backgroundColor": "#acd3ff"}
+      },
+      "text": {
+        "content": "Submit",
+        "styles": {"default": {"color": "#6c6c6c"}, "hover": {"color": "#2c2c2c"}}
+      },
+      "svg": {"content": ""}
+    },
+    "loading": {
+      "text": {"content": "Loading"},
+      "svg": {"content": ""}
+    },
+    "stop": {
+      "container": {
+        "hover": {"backgroundColor": "#c6e1ff"},
+        "click": {"backgroundColor": "#acd3ff"}
+      },
+      "text": {"content": "Stop"},
+      "svg": {"content": ""}
+    },
+    "alwaysEnabled": true
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  textInput='{"styles": {"text": {"paddingRight": "70px"}}}'
+  submitButtonStyles='{
+    "submit": {
+      "container": {
+        "default": {"backgroundColor": "#ddedff"},
+        "hover": {"backgroundColor": "#c6e1ff"},
+        "click": {"backgroundColor": "#acd3ff"}
+      },
+      "text": {
+        "content": "Submit",
+        "styles": {"default": {"color": "#6c6c6c"}, "hover": {"color": "#2c2c2c"}}
+      },
+      "svg": {"content": ""}
+    },
+    "loading": {
+      "text": {"content": "Loading"},
+      "svg": {"content": ""}
+    },
+    "stop": {
+      "container": {
+        "hover": {"backgroundColor": "#c6e1ff"},
+        "click": {"backgroundColor": "#acd3ff"}
+      },
+      "text": {"content": "Stop"},
+      "svg": {"content": ""}
+    },
+    "alwaysEnabled": true
+  }'
+  style="border-radius: 8px"
+  connect='{"stream": true}'
+  demo="true"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+#### Disabled example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    submitButtonStyles={{
+      disabled: {
+        container: {default: {cursor: 'auto'}},
+        svg: {
+          content: `<?xml version="1.0" encoding="utf-8"?> <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" d="M5.781 4.414a7 7 0 019.62 10.039l-9.62-10.04zm-1.408 1.42a7 7 0 009.549 9.964L4.373 5.836zM10 1a9 9 0 100 18 9 9 0 000-18z"/> </svg>`,
+          styles: {
+            default: {paddingTop: '2.4px', paddingleft: '2px'},
+          },
+        },
+      },
+    }}
+    demo={true}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  submitButtonStyles='{
+    "disabled": {
+      "container": {"default": {"cursor": "auto"}},
+      "svg": {
+        "content": "<?xml version=\"1.0\" encoding=\"utf-8\"?> <svg viewBox=\"0 0 25 25\" xmlns=\"http://www.w3.org/2000/svg\"> <path fill-rule=\"evenodd\" d=\"M5.781 4.414a7 7 0 019.62 10.039l-9.62-10.04zm-1.408 1.42a7 7 0 009.549 9.964L4.373 5.836zM10 1a9 9 0 100 18 9 9 0 000-18z\"/> </svg>",
+        "styles": {"default": {"paddingTop": "2.4px", "paddingLeft": "2px"}}
+      }
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  submitButtonStyles='{
+    "disabled": {
+      "container": {"default": {"cursor": "auto"}},
+      "svg": {
+        "content": "<?xml version=\"1.0\" encoding=\"utf-8\"?> <svg viewBox=\"0 0 25 25\" xmlns=\"http://www.w3.org/2000/svg\"> <path fill-rule=\"evenodd\" d=\"M5.781 4.414a7 7 0 019.62 10.039l-9.62-10.04zm-1.408 1.42a7 7 0 009.549 9.964L4.373 5.836zM10 1a9 9 0 100 18 9 9 0 000-18z\"/> </svg>",
+        "styles": {"default": {"paddingTop": "2.4px", "paddingLeft": "2px"}}
+      }
+    }
+  }'
+  style="border-radius: 8px"
+  demo="true"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+#### Combination Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    textInput={{
+      styles: {
+        container: {
+          paddingBottom: '2px',
+        },
+        text: {
+          paddingRight: '74px',
+        },
+      },
+    }}
+    submitButtonStyles={{
+      submit: {
+        container: {
+          default: {backgroundColor: '#ddedff'},
+          hover: {backgroundColor: '#c6e1ff'},
+          click: {backgroundColor: '#acd3ff'},
+        },
+        text: {
+          content: 'Send',
+          styles: {default: {color: '#6c6c6c'}, hover: {color: '#2c2c2c'}},
+        },
+      },
+      loading: {
+        container: {
+          default: {backgroundColor: 'unset'},
+        },
+        text: {
+          content: 'Loading',
+        },
+        svg: {
+          content:
+            '<?xml version="1.0" encoding="utf-8"?>\n<svg viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">\n<title>stop</title>\n<path d="M5.92 24.096q0 0.832 0.576 1.408t1.44 0.608h16.128q0.832 0 1.44-0.608t0.576-1.408v-16.16q0-0.832-0.576-1.44t-1.44-0.576h-16.128q-0.832 0-1.44 0.576t-0.576 1.44v16.16z"></path>\n</svg>',
+        },
+      },
+      stop: {
+        container: {
+          default: {backgroundColor: 'unset'},
+        },
+        text: {
+          content: 'Stop',
+        },
+        svg: {
+          content:
+            '<?xml version="1.0" encoding="utf-8"?>\n<svg viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">\n<title>stop</title>\n<path d="M5.92 24.096q0 0.832 0.576 1.408t1.44 0.608h16.128q0.832 0 1.44-0.608t0.576-1.408v-16.16q0-0.832-0.576-1.44t-1.44-0.576h-16.128q-0.832 0-1.44 0.576t-0.576 1.44v16.16z"></path>\n</svg>',
+        },
+      },
+      disabled: {
+        text: {
+          content: 'Waiting',
+        },
+      },
+    }}
+    connect={{stream: true}}
+    demo={true}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  submitButtonStyles='{
+    "submit": {
+      "container": {
+        "default": {"backgroundColor": "#ddedff"},
+        "hover": {"backgroundColor": "#c6e1ff"},
+        "click": {"backgroundColor": "#acd3ff"}
+      },
+      "text": {
+        "content": "Send",
+        "styles": {"default": {"color": "#6c6c6c"}, "hover": {"color": "#2c2c2c"}}
+      }
+    },
+    "loading": {
+      "container": {"default": {"backgroundColor": "unset"}},
+      "text": {"content": "Loading"},
+      "svg": {
+        "content":
+          "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg viewBox=\"0 0 32 32\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n<title>stop</title>\n<path d=\"M5.92 24.096q0 0.832 0.576 1.408t1.44 0.608h16.128q0.832 0 1.44-0.608t0.576-1.408v-16.16q0-0.832-0.576-1.44t-1.44-0.576h-16.128q-0.832 0-1.44 0.576t-0.576 1.44v16.16z\"></path>\n</svg>"
+      }
+    },
+    "stop": {
+      "container": {"default": {"backgroundColor": "unset"}},
+      "text": {"content": "Stop"},
+      "svg": {
+        "content":
+          "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg viewBox=\"0 0 32 32\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n<title>stop</title>\n<path d=\"M5.92 24.096q0 0.832 0.576 1.408t1.44 0.608h16.128q0.832 0 1.44-0.608t0.576-1.408v-16.16q0-0.832-0.576-1.44t-1.44-0.576h-16.128q-0.832 0-1.44 0.576t-0.576 1.44v16.16z\"></path>\n</svg>"
+      }
+    },
+    "disabled": {"text": {"content": "Waiting"}}
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  submitButtonStyles='{
+    "submit": {
+      "container": {
+        "default": {"backgroundColor": "#ddedff"},
+        "hover": {"backgroundColor": "#c6e1ff"},
+        "click": {"backgroundColor": "#acd3ff"}
+      },
+      "text": {
+        "content": "Send",
+        "styles": {"default": {"color": "#6c6c6c"}, "hover": {"color": "#2c2c2c"}}
+      }
+    },
+    "loading": {
+      "container": {"default": {"backgroundColor": "unset"}},
+      "text": {"content": "Loading"},
+      "svg": {
+        "content":
+          "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg viewBox=\"0 0 32 32\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n<title>stop</title>\n<path d=\"M5.92 24.096q0 0.832 0.576 1.408t1.44 0.608h16.128q0.832 0 1.44-0.608t0.576-1.408v-16.16q0-0.832-0.576-1.44t-1.44-0.576h-16.128q-0.832 0-1.44 0.576t-0.576 1.44v16.16z\"></path>\n</svg>"
+      }
+    },
+    "stop": {
+      "container": {"default": {"backgroundColor": "unset"}},
+      "text": {"content": "Stop"},
+      "svg": {
+        "content":
+          "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg viewBox=\"0 0 32 32\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n<title>stop</title>\n<path d=\"M5.92 24.096q0 0.832 0.576 1.408t1.44 0.608h16.128q0.832 0 1.44-0.608t0.576-1.408v-16.16q0-0.832-0.576-1.44t-1.44-0.576h-16.128q-0.832 0-1.44 0.576t-0.576 1.44v16.16z\"></path>\n</svg>"
+      }
+    },
+    "disabled": {"text": {"content": "Waiting"}}
+  }'
+  textInput='{
+    "styles": {
+      "container": {"paddingBottom": "2px"},
+      "text": {"paddingRight": "74px"}
+    }}'
+  style="border-radius: 8px"
+  connect='{"stream": true}'
+  demo="true"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+## Custom Button Types
+
+Types shared by custom button properties:
+
+### `CustomButtonState` {#CustomButtonState}
+
+- Type: `"default"` | `"active"` | `"disabled"`
+
+Available states for the custom button.
+
+### `CustomButtonStyles` {#CustomButtonStyles}
+
+- Type: \{[`default?: ButtonStyles`](#ButtonStyles), [`active?: ButtonStyles`](#ButtonStyles), [`disabled?: ButtonStyles`](#ButtonStyles)\}
+
+Styling for the states of a custom button.
+
+#### Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    demo={true}
+    customButtons={[
+      {
+        styles: {
+          button: {
+            default: {
+              svg: {
+                styles: {
+                  default: {
+                    filter:
+                      'brightness(0) saturate(100%) invert(42%) sepia(81%) saturate(1870%) hue-rotate(85deg) brightness(106%) contrast(103%)',
+                  },
+                },
+              },
+              text: {
+                styles: {default: {color: '#09C000'}},
+                content: 'Button',
+              },
+            },
+          },
+        },
+      },
+    ]}
+    textInput={{
+      styles: {
+        container: {width: '200px', marginLeft: '-48px'},
+      },
+    }}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  customButtons='[
+    {
+      "styles": {
+        "button": {
+          "default": {
+            "svg": {
+              "styles": {
+                "default": {
+                  "filter":
+                    "brightness(0) saturate(100%) invert(42%) sepia(81%) saturate(1870%) hue-rotate(85deg) brightness(106%) contrast(103%)"
+                }
+              }
+            },
+            "text": {
+              "styles": {"default": {"color": "#09C000"}},
+              "content": "Button"
+            }}}}}
+  ]'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  demo="true"
+  style="border-radius: 8px"
+  customButtons='[
+    {
+      "styles": {
+        "button": {
+          "default": {
+            "svg": {
+              "styles": {
+                "default": {
+                  "filter":
+                    "brightness(0) saturate(100%) invert(42%) sepia(81%) saturate(1870%) hue-rotate(85deg) brightness(106%) contrast(103%)"
+                }
+              }
+            },
+            "text": {
+              "styles": {"default": {"color": "#09C000"}},
+              "content": "Button"
+            }}}}}
+  ]'
+  textInput='{
+    "styles": {
+      "container": { "width": "200px", "marginLeft": "-48px" }
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `CustomDropupItemStyles` {#CustomDropupItemStyles}
+
+- Type: \{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`default?: CustomDropupItemStateStyles`](#CustomDropupItemStateStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`active?: CustomDropupItemStateStyles`](#CustomDropupItemStateStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`disabled?: CustomDropupItemStateStyles`](#CustomDropupItemStateStyles) <br />
+  \}
+
+Styling for the states of a custom dropup item.
+
+<LineBreak></LineBreak>
+
+### `CustomDropupItemStateStyles` {#CustomDropupItemStateStyles}
+
+- Type: \{[`item?: StatefulStyles`](/docs/styles#StatefulStyles), [`iconContainer?: CustomStyle`](/docs/styles#CustomStyle), [`text?: CustomStyle`](/docs/styles#CustomStyle)\}
+
+Styling for a custom item inside the dropup menu. <br />
+Tthe dropup item _svg icon_ and _text_ are defined via the `content` property in [`CustomButtonStyles`](#CustomButtonStyles). <br />
+For default and other dropup styles see [`dropupStyles`](/docs/styles/#dropupStyles). <br />
+
+#### Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    demo={true}
+    customButtons={[
+      {
+        position: 'dropup-menu',
+        styles: {
+          dropup: {
+            default: {
+              text: {
+                color: 'green',
+              },
+              item: {
+                default: {
+                  border: '1px solid green',
+                },
+              },
+              iconContainer: {
+                filter:
+                  'brightness(0) saturate(100%) invert(23%) sepia(67%) saturate(2914%) hue-rotate(104deg) brightness(99%) contrast(103%)',
+              },
+            },
+          },
+          button: {
+            default: {
+              text: {
+                content: 'Button',
+              },
+            },
+          },
+        },
+      },
+    ]}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  customButtons='[
+    {
+      "styles": {
+        "dropup": {
+          "default": {
+            "text": {"color": "green"},
+            "item": {"default": {"border": "1px solid green"}},
+            "iconContainer": {
+              "filter": "brightness(0) saturate(100%) invert(23%) sepia(67%) saturate(2914%) hue-rotate(104deg) brightness(99%) contrast(103%)"
+            }
+          }
+        },
+        "button": {
+          "default": {
+            "text": {
+              "content": "Button"
+            }}}}}
+  ]'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  demo="true"
+  style="border-radius: 8px"
+  customButtons='[
+    {
+      "position": "dropup-menu",
+      "styles": {
+        "dropup": {
+          "default": {
+            "text": {"color": "green"},
+            "item": {"default": {"border": "1px solid green"}},
+            "iconContainer": {
+              "filter": "brightness(0) saturate(100%) invert(23%) sepia(67%) saturate(2914%) hue-rotate(104deg) brightness(99%) contrast(103%)"
+            }
+          }
+        },
+        "button": {
+          "default": {
+            "text": {
+              "content": "Button"
+            }}}}}
+  ]'
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `SetCustomButtonState` {#SetCustomButtonState}
+
+- Type: ([`newState: CustomButtonState`](#CustomButtonState)) => `void`
+
+Change button state programmatically. <br />
+
+#### Example
+
+<ComponentContainerMethods
+  onClick={(chatElementRef) => {
+    chatElementRef.customButtons[0].setState('active');
+  }}
+  displayResults={false}
+>
+  <DeepChatBrowser style={{borderRadius: '8px'}} customButtons={[{}]} demo={true}></DeepChatBrowser>
+</ComponentContainerMethods>
+
+<Tabs>
+<TabItem value="js" label="Code">
+
+```html
+chatElementRef.customButtons[0].setState('active');
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `OnClickCustomButton` {#OnClickCustomButton}
+
+- Type: ([`currentState: CustomButtonState`](#CustomButtonState)) => [`CustomButtonState`](#CustomButtonState) | `void`
+
+Assign a function that is triggered when the custom button is clicked. <br />
+You can optionaly return a [`CustomButtonState`](#CustomButtonState) string to give the button a new state. <br />
+
+#### Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    demo={true}
+    customButtons={[
+      {
+        onClick: (state) => {
+          return state === 'default' ? 'active' : 'default';
+        },
+      },
+    ]}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Function">
+
+```js
+chatElementRef.customButtons[0].onClick = (state) => (state === 'default' ? 'active' : 'default');
+```
+
+</TabItem>
+<TabItem value="py" label="Named Function">
+
+```js
+chatElementRef.customButtons[0].onClick = function (state) {
+  return state === 'default' ? 'active' : 'default';
+};
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+## Types
+
+Types shared by button styles properties.
+
+### `Button` {#Button}
+
+- Type: \{[`styles?: ButtonStyles`](#ButtonStyles), [`position?: ButtonPosition`](#ButtonPosition), [`tooltip?: Tooltip`](#Tooltip)\}
+
+Styling preferences for a button inside the chat view. <br />
+`styles` defines the button styling. <br />
+`position` is used to set the button location. <br />
+`tooltip` adds a tooltip to the button.
+
+#### Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    demo={true}
+    images={{
+      button: {
+        styles: {
+          container: {
+            default: {backgroundColor: '#e6f0ff'},
+            hover: {backgroundColor: '#dbe9ff'},
+            click: {backgroundColor: '#c4dbff'},
+          },
+        },
+        position: 'outside-start',
+      },
+    }}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  images='{
+    "button": {
+      "styles": {
+        "container": {
+          "default": {"backgroundColor": "#e6f0ff"},
+          "hover": {"backgroundColor": "#dbe9ff"},
+          "click": {"backgroundColor": "#c4dbff"}
+        }
+      },
+      "position": "outside-start"
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  images='{
+    "button": {
+      "styles": {
+        "container": {
+          "default": {"backgroundColor": "#e6f0ff"},
+          "hover": {"backgroundColor": "#dbe9ff"},
+          "click": {"backgroundColor": "#c4dbff"}
+        }
+      },
+      "position": "outside-start"
+    }
+  }'
+  style="border-radius: 8px"
+  demo="true"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `ButtonStyles` {#ButtonStyles}
+
+- Type: \{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`container?: StatefulStyles`](/docs/styles#StatefulStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`svg?: ButtonInnerStyles`](#ButtonInnerStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`text?: ButtonInnerStyles`](#ButtonInnerStyles) <br />
+  \}
+
+Styling for a button inside the chat view. <br />
+`container` is used to style the base element of the button for its various mouse states. <br />
+`svg` is used to style an svg icon (the default inner element) inside the button. <br />
+`text` is used to create and style a text icon inside the button.
+
+#### Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    textInput={{styles: {text: {paddingRight: '64px'}}}}
+    submitButtonStyles={{
+      submit: {
+        container: {
+          default: {backgroundColor: 'black'},
+          hover: {backgroundColor: '#3D3D3D'},
+          click: {backgroundColor: '#555555'},
+        },
+        svg: {
+          styles: {
+            default: {
+              filter:
+                'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(273deg) brightness(103%) contrast(103%)',
+            },
+          },
+          content:
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">\n<path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>\n</svg>',
+        },
+      },
+      alwaysEnabled: true,
+    }}
+    demo={true}
+    images={{
+      button: {
+        styles: {
+          container: {
+            default: {backgroundColor: 'unset', width: '1.4em', bottom: '0.75em'},
+          },
+          svg: {
+            content: `<?xml version="1.0" ?> <svg viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg"> <g id="layer1"> <path d="M 10,2 C 4.5399633,2 0,5.5155856 0,10 a 0.50005,0.50005 0 0 0 0,0.002 c 0.00211683,0.498935 0.0623158,0.997281 0.1796875,1.486328 a 0.50005,0.50005 0 0 0 0.65625,0.353516 c 0.166982,-0.06005 0.3346003,-0.11455 0.5058594,-0.162109 3.2465843,-0.86948 6.3865589,0.651858 7.0898437,3.277343 0.1999132,0.753403 0.1847938,1.55275 -0.046875,2.341797 A 0.50005,0.50005 0 0 0 8.8144531,17.9375 C 9.2066201,17.97715 9.6008792,17.99763 9.9960938,18 A 0.50005,0.50005 0 0 0 10,18 C 15.460037,18 20,14.484414 20,10 20,5.5155856 15.460037,2 10,2 Z m 0,1 c 5.033373,0 9,3.2001431 9,7 0,3.798831 -3.964655,6.998273 -8.996094,7 C 9.7877816,16.9987 9.5727572,16.978264 9.3574219,16.964844 9.490202,16.205055 9.5915438,15.434329 9.3964844,14.699219 8.5282549,11.457966 4.7749194,9.7293469 1.0878906,10.714844 1.0549598,10.475808 1.0010202,10.238508 1,9.9980469 1.0013454,6.1990381 4.9674803,3 10,3 Z M 9.5,4 C 8.677494,4 8,4.677495 8,5.5 8,6.322505 8.677494,7 9.5,7 10.322505,7 11,6.322505 11,5.5 11,4.677495 10.322505,4 9.5,4 Z m -4,1 C 4.677495,5 4,5.677495 4,6.5 4,7.322505 4.677495,8 5.5,8 6.322505,8 7,7.322505 7,6.5 7,5.677495 6.322505,5 5.5,5 Z m 4,0 C 9.782065,5 10,5.217935 10,5.5 10,5.782065 9.782065,6 9.5,6 9.217935,6 9,5.782065 9,5.5 9,5.217935 9.217935,5 9.5,5 Z m 4,0 C 12.677494,5 12,5.677495 12,6.5 12,7.322505 12.677494,8 13.5,8 14.322505,8 15,7.322505 15,6.5 15,5.677495 14.322505,5 13.5,5 Z m -8,1 C 5.782065,6 6,6.217935 6,6.5 6,6.782065 5.782065,7 5.5,7 5.217935,7 5,6.782065 5,6.5 5,6.217935 5.217935,6 5.5,6 Z m 8,0 C 13.782065,6 14,6.217935 14,6.5 14,6.782065 13.782065,7 13.5,7 13.217935,7 13,6.782065 13,6.5 13,6.217935 13.217935,6 13.5,6 Z m 3,2 C 15.677494,8 15,8.677495 15,9.5 15,10.322505 15.677494,11 16.5,11 17.322505,11 18,10.322505 18,9.5 18,8.677495 17.322505,8 16.5,8 Z m 0,1 C 16.782065,9 17,9.217935 17,9.5 17,9.782065 16.782065,10 16.5,10 16.217935,10 16,9.782065 16,9.5 16,9.217935 16.217935,9 16.5,9 Z m -3,3 C 12.677494,12 12,12.677495 12,13.5 12,14.322505 12.677494,15 13.5,15 14.322505,15 15,14.322505 15,13.5 15,12.677495 14.322505,12 13.5,12 Z m 0,1 C 13.782065,13 14,13.217935 14,13.5 14,13.782065 13.782065,14 13.5,14 13.217935,14 13,13.782065 13,13.5 13,13.217935 13.217935,13 13.5,13 Z" style="fill:#222222; fill-opacity:1; stroke:none; stroke-width:0px;"/> </g> </svg>`,
+            styles: {
+              default: {
+                filter:
+                  'brightness(0) saturate(100%) invert(45%) sepia(20%) saturate(0%) hue-rotate(255deg) brightness(99%) contrast(101%)',
+              },
+              hover: {
+                filter:
+                  'brightness(0) saturate(100%) invert(61%) sepia(41%) saturate(5169%) hue-rotate(187deg) brightness(99%) contrast(105%)',
+              },
+              click: {
+                filter:
+                  'brightness(0) saturate(100%) invert(58%) sepia(68%) saturate(541%) hue-rotate(179deg) brightness(104%) contrast(100%)',
+              },
+            },
+          },
+        },
+      },
+    }}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  submitButtonStyles='{
+    "submit": {
+      "container": {
+        "default": {"backgroundColor": "black"},
+        "hover": {"backgroundColor": "#3D3D3D"},
+        "click": {"backgroundColor": "#555555"}
+      },
+      "svg": {
+        "styles": {
+          "default": {
+            "filter":
+              "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(273deg) brightness(103%) contrast(103%)"
+          }
+        },
+        "content":
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\">\n<path d=\"M12 5V19M12 5L6 11M12 5L18 11\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n</svg>"          }
+    }
+  }'
+  images='{
+    "button": {
+      "styles": {
+        "container": {
+          "default": {"backgroundColor": "unset", "width": "1.4em", "bottom": "0.75em"}
+        },
+        "svg": {
+          "content": "<?xml version=\"1.0\" ?> <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"> <g id=\"layer1\"> <path d=\"M 10,2 C 4.5399633,2 0,5.5155856 0,10 a 0.50005,0.50005 0 0 0 0,0.002 c 0.00211683,0.498935 0.0623158,0.997281 0.1796875,1.486328 a 0.50005,0.50005 0 0 0 0.65625,0.353516 c 0.166982,-0.06005 0.3346003,-0.11455 0.5058594,-0.162109 3.2465843,-0.86948 6.3865589,0.651858 7.0898437,3.277343 0.1999132,0.753403 0.1847938,1.55275 -0.046875,2.341797 A 0.50005,0.50005 0 0 0 8.8144531,17.9375 C 9.2066201,17.97715 9.6008792,17.99763 9.9960938,18 A 0.50005,0.50005 0 0 0 10,18 C 15.460037,18 20,14.484414 20,10 20,5.5155856 15.460037,2 10,2 Z m 0,1 c 5.033373,0 9,3.2001431 9,7 0,3.798831 -3.964655,6.998273 -8.996094,7 C 9.7877816,16.9987 9.5727572,16.978264 9.3574219,16.964844 9.490202,16.205055 9.5915438,15.434329 9.3964844,14.699219 8.5282549,11.457966 4.7749194,9.7293469 1.0878906,10.714844 1.0549598,10.475808 1.0010202,10.238508 1,9.9980469 1.0013454,6.1990381 4.9674803,3 10,3 Z M 9.5,4 C 8.677494,4 8,4.677495 8,5.5 8,6.322505 8.677494,7 9.5,7 10.322505,7 11,6.322505 11,5.5 11,4.677495 10.322505,4 9.5,4 Z m -4,1 C 4.677495,5 4,5.677495 4,6.5 4,7.322505 4.677495,8 5.5,8 6.322505,8 7,7.322505 7,6.5 7,5.677495 6.322505,5 5.5,5 Z m 4,0 C 9.782065,5 10,5.217935 10,5.5 10,5.782065 9.782065,6 9.5,6 9.217935,6 9,5.782065 9,5.5 9,5.217935 9.217935,5 9.5,5 Z m 4,0 C 12.677494,5 12,5.677495 12,6.5 12,7.322505 12.677494,8 13.5,8 14.322505,8 15,7.322505 15,6.5 15,5.677495 14.322505,5 13.5,5 Z m -8,1 C 5.782065,6 6,6.217935 6,6.5 6,6.782065 5.782065,7 5.5,7 5.217935,7 5,6.782065 5,6.5 5,6.217935 5.217935,6 5.5,6 Z m 8,0 C 13.782065,6 14,6.217935 14,6.5 14,6.782065 13.782065,7 13.5,7 13.217935,7 13,6.782065 13,6.5 13,6.217935 13.217935,6 13.5,6 Z m 3,2 C 15.677494,8 15,8.677495 15,9.5 15,10.322505 15.677494,11 16.5,11 17.322505,11 18,10.322505 18,9.5 18,8.677495 17.322505,8 16.5,8 Z m 0,1 C 16.782065,9 17,9.217935 17,9.5 17,9.782065 16.782065,10 16.5,10 16.217935,10 16,9.782065 16,9.5 16,9.217935 16.217935,9 16.5,9 Z m -3,3 C 12.677494,12 12,12.677495 12,13.5 12,14.322505 12.677494,15 13.5,15 14.322505,15 15,14.322505 15,13.5 15,12.677495 14.322505,12 13.5,12 Z m 0,1 C 13.782065,13 14,13.217935 14,13.5 14,13.782065 13.782065,14 13.5,14 13.217935,14 13,13.782065 13,13.5 13,13.217935 13.217935,13 13.5,13 Z\" style=\"fill:#222222; fill-opacity:1; stroke:none; stroke-width:0px;\"/> </g> </svg>",
+          "styles": {
+            "default": {
+              "filter":
+                "brightness(0) saturate(100%) invert(45%) sepia(20%) saturate(0%) hue-rotate(255deg) brightness(99%) contrast(101%)"
+            },
+            "hover": {
+              "filter":
+                "brightness(0) saturate(100%) invert(61%) sepia(41%) saturate(5169%) hue-rotate(187deg) brightness(99%) contrast(105%)"
+            },
+            "click": {
+              "filter":
+                "brightness(0) saturate(100%) invert(58%) sepia(68%) saturate(541%) hue-rotate(179deg) brightness(104%) contrast(100%)"
+            }
+          }
+        }
+      }
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  textInput='{"styles": {"text": {"paddingRight": "40px"}}}'
+  style="border-radius: 8px"
+  demo="true"
+  submitButtonStyles='{
+    "submit": {
+      "container": {
+        "default": {"backgroundColor": "black"},
+        "hover": {"backgroundColor": "#3D3D3D"},
+        "click": {"backgroundColor": "#555555"}
+      },
+      "svg": {
+        "styles": {
+          "default": {
+            "filter":
+              "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(273deg) brightness(103%) contrast(103%)"
+          }
+        },
+        "content":
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\">\n<path d=\"M12 5V19M12 5L6 11M12 5L18 11\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n</svg>"          }
+    }
+  }'
+  images='{
+    "button": {
+      "styles": {
+        "container": {
+          "default": {"backgroundColor": "unset", "width": "1.4em", "bottom": "0.75em"}
+        },
+        "svg": {
+          "content": "<?xml version=\"1.0\" ?> <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"> <g id=\"layer1\"> <path d=\"M 10,2 C 4.5399633,2 0,5.5155856 0,10 a 0.50005,0.50005 0 0 0 0,0.002 c 0.00211683,0.498935 0.0623158,0.997281 0.1796875,1.486328 a 0.50005,0.50005 0 0 0 0.65625,0.353516 c 0.166982,-0.06005 0.3346003,-0.11455 0.5058594,-0.162109 3.2465843,-0.86948 6.3865589,0.651858 7.0898437,3.277343 0.1999132,0.753403 0.1847938,1.55275 -0.046875,2.341797 A 0.50005,0.50005 0 0 0 8.8144531,17.9375 C 9.2066201,17.97715 9.6008792,17.99763 9.9960938,18 A 0.50005,0.50005 0 0 0 10,18 C 15.460037,18 20,14.484414 20,10 20,5.5155856 15.460037,2 10,2 Z m 0,1 c 5.033373,0 9,3.2001431 9,7 0,3.798831 -3.964655,6.998273 -8.996094,7 C 9.7877816,16.9987 9.5727572,16.978264 9.3574219,16.964844 9.490202,16.205055 9.5915438,15.434329 9.3964844,14.699219 8.5282549,11.457966 4.7749194,9.7293469 1.0878906,10.714844 1.0549598,10.475808 1.0010202,10.238508 1,9.9980469 1.0013454,6.1990381 4.9674803,3 10,3 Z M 9.5,4 C 8.677494,4 8,4.677495 8,5.5 8,6.322505 8.677494,7 9.5,7 10.322505,7 11,6.322505 11,5.5 11,4.677495 10.322505,4 9.5,4 Z m -4,1 C 4.677495,5 4,5.677495 4,6.5 4,7.322505 4.677495,8 5.5,8 6.322505,8 7,7.322505 7,6.5 7,5.677495 6.322505,5 5.5,5 Z m 4,0 C 9.782065,5 10,5.217935 10,5.5 10,5.782065 9.782065,6 9.5,6 9.217935,6 9,5.782065 9,5.5 9,5.217935 9.217935,5 9.5,5 Z m 4,0 C 12.677494,5 12,5.677495 12,6.5 12,7.322505 12.677494,8 13.5,8 14.322505,8 15,7.322505 15,6.5 15,5.677495 14.322505,5 13.5,5 Z m -8,1 C 5.782065,6 6,6.217935 6,6.5 6,6.782065 5.782065,7 5.5,7 5.217935,7 5,6.782065 5,6.5 5,6.217935 5.217935,6 5.5,6 Z m 8,0 C 13.782065,6 14,6.217935 14,6.5 14,6.782065 13.782065,7 13.5,7 13.217935,7 13,6.782065 13,6.5 13,6.217935 13.217935,6 13.5,6 Z m 3,2 C 15.677494,8 15,8.677495 15,9.5 15,10.322505 15.677494,11 16.5,11 17.322505,11 18,10.322505 18,9.5 18,8.677495 17.322505,8 16.5,8 Z m 0,1 C 16.782065,9 17,9.217935 17,9.5 17,9.782065 16.782065,10 16.5,10 16.217935,10 16,9.782065 16,9.5 16,9.217935 16.217935,9 16.5,9 Z m -3,3 C 12.677494,12 12,12.677495 12,13.5 12,14.322505 12.677494,15 13.5,15 14.322505,15 15,14.322505 15,13.5 15,12.677495 14.322505,12 13.5,12 Z m 0,1 C 13.782065,13 14,13.217935 14,13.5 14,13.782065 13.782065,14 13.5,14 13.217935,14 13,13.782065 13,13.5 13,13.217935 13.217935,13 13.5,13 Z\" style=\"fill:#222222; fill-opacity:1; stroke:none; stroke-width:0px;\"/> </g> </svg>",
+          "styles": {
+            "default": {
+              "filter":
+                "brightness(0) saturate(100%) invert(45%) sepia(20%) saturate(0%) hue-rotate(255deg) brightness(99%) contrast(101%)"
+            },
+            "hover": {
+              "filter":
+                "brightness(0) saturate(100%) invert(61%) sepia(41%) saturate(5169%) hue-rotate(187deg) brightness(99%) contrast(105%)"
+            },
+            "click": {
+              "filter":
+                "brightness(0) saturate(100%) invert(58%) sepia(68%) saturate(541%) hue-rotate(179deg) brightness(104%) contrast(100%)"
+            }
+          }
+        }
+      }
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+:::tip
+You can use the [`CSSFilterConverter`](https://cssfilterconverter.com/) tool to generate filter values for the icon color.
+:::
+
+<LineBreak></LineBreak>
+
+### `ButtonInnerStyles` {#ButtonInnerStyles}
+
+- Type: \{[`styles?: StatefulStyles`](/docs/styles#StatefulStyles), `content?: string` \}
+
+Styling for an element inside a button container. <br />
+`styles` is used to set the style of the element for its various mouse states. <br />
+`content` is a string that is used to generate the inner element. When it is inside a [`text`](#ButtonStyles) property - the string generates the element text.
+When inside an [`svg`](#ButtonStyles) property - the string needs to be a full inlined svg element HTML which will be used to generate the icon.
+
+:::info
+To not display an `svg` or `text`, set the `content` property to an empty string e.g. `content: ""`.
+:::
+
+:::info
+If the `content` string is used for an [`svg`](#ButtonStyles):
+
+- It needs to contain a _xmlns="http://www.w3.org/2000/svg"_ attribute.
+- If it is inside a HTML attribute (the parentmost object is inside quotes `"` - see the editable example) or when not using backticks (`` ` ``) - make sure to escape the quotes by changing
+  `"` to `\"` (An easy way to do this is to stringify it using _JSON.stringify()_). Also when inside a HTML attribute, replace the first `<` character with `&lt`.
+
+:::
+
+<LineBreak></LineBreak>
+
+### `ButtonPosition` {#ButtonPosition}
+
+- Type: `"inside-start"` | `"inside-end"` | `"outside-start"` | `"outside-end"` | `"dropup-menu"`
+
+Position for a button either _inside_ the [text input container](/docs/styles#textInput), _outside_ it (either _left_ or _right_) or inside the [`dropup menu`](/docs/styles#dropupStyles).
+
+#### Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    demo={true}
+    gifs={{button: {position: 'dropup-menu'}}}
+    audio={{button: {position: 'dropup-menu'}}}
+    camera={{button: {position: 'dropup-menu'}}}
+    mixedFiles={{button: {position: 'inside-start'}}}
+    microphone={{button: {position: 'outside-end'}}}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  gifs='{"button": {"position": "dropup-menu"}}'
+  audio='{"button": {"position": "dropup-menu"}}'
+  camera='{"button": {"position": "dropup-menu"}}'
+  mixedFiles='{"button": {"position": "inside-start"}}'
+  microphone='{"button": {"position": "outside-end"}}'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  demo="true"
+  style="border-radius: 8px"
+  gifs='{"button": {"position": "dropup-menu"}}'
+  audio='{"button": {"position": "dropup-menu"}}'
+  camera='{"button": {"position": "dropup-menu"}}'
+  mixedFiles='{"button": {"position": "inside-start"}}'
+  microphone='{"button": {"position": "outside-end"}}'
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `Tooltip` {#Tooltip}
+
+- Type: `true` | \{`text?: string`, `timeout?: number`, [`style?: CustomStyle`](/docs/styles#CustomStyle)\}
+- Default: _\{timeout: 0\}_
+
+Tooltip for a button. You can enable this by setting the value to _true_ or by defining an object
+with any of the following properties: <br />
+`text` is the tooltip text. <br />
+`timeout` is the milliseconds that it takes for the tooltip to appear. <br />
+`style` is used to add a custom style.
+
+#### Example
+
+<ComponentContainer>
+  <DeepChatBrowser
+    images={{button: {tooltip: {text: 'Upload an image', style: {left: '200px'}}}}}
+    style={{borderRadius: '8px'}}
+    demo={true}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat images='{"button": {"tooltip": {"text": "Upload an image", "style": {"left": "200px"}}}}'></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  demo="true"
+  style="border-radius: 8px"
+  images='{"button": {"tooltip": {"text": "Upload an image", "style": {"left": "200px"}}}}'
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+### `MicrophoneStyles` {#MicrophoneStyles}
+
+- Type: \{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`default?: ButtonStyles`](#ButtonStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`active?: ButtonStyles`](#ButtonStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`unsupported?: ButtonStyles`](#ButtonStyles), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`position?: ButtonPosition`](#ButtonPosition), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`tooltip?: Tooltip`](#Tooltip) <br />
+  \}
+
+Custom styling for the microphone button. <br />
+`default` is used for the default button state. <br />
+`active` is used when the microphone is active. <br />
+`unsupported` is used when recording is not supported on the user's browser. <br />
+`position` is the button position within the input area.
+`tooltip` adds a tooltip to the button.
+
+<ComponentContainer>
+  <DeepChatBrowser
+    style={{borderRadius: '8px'}}
+    introMessage={{text: 'Use the microphone button to record audio.'}}
+    demo={true}
+    microphone={{
+      button: {
+        default: {
+          container: {
+            hover: {
+              backgroundColor: '#7fbded69',
+            },
+            click: {
+              backgroundColor: '#4babf669',
+            },
+          },
+          svg: {
+            styles: {
+              default: {
+                filter:
+                  'brightness(0) saturate(100%) invert(49%) sepia(53%) saturate(6895%) hue-rotate(200deg) brightness(101%) contrast(101%)',
+              },
+              hover: {
+                filter:
+                  'brightness(0) saturate(100%) invert(27%) sepia(59%) saturate(5655%) hue-rotate(203deg) brightness(101%) contrast(84%)',
+              },
+            },
+          },
+        },
+        active: {
+          container: {
+            hover: {
+              backgroundColor: '#ffd07c70',
+            },
+            click: {
+              backgroundColor: '#ecb85c70',
+            },
+          },
+          svg: {
+            styles: {
+              default: {
+                filter:
+                  'brightness(0) saturate(100%) invert(49%) sepia(99%) saturate(477%) hue-rotate(343deg) brightness(100%) contrast(101%)',
+              },
+            },
+          },
+        },
+      },
+    }}
+  ></DeepChatBrowser>
+</ComponentContainer>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  microphone='{
+    "button": {
+      "default": {
+        "container": {
+          "hover": {"backgroundColor": "#7fbded69"},
+          "click": {"backgroundColor": "#4babf669"}
+        },
+        "svg": {
+          "styles": {
+            "default": {
+              "filter":
+                "brightness(0) saturate(100%) invert(49%) sepia(53%) saturate(6895%) hue-rotate(200deg) brightness(101%) contrast(101%)"
+            },
+            "hover": {
+              "filter":
+                "brightness(0) saturate(100%) invert(27%) sepia(59%) saturate(5655%) hue-rotate(203deg) brightness(101%) contrast(84%)"
+            }
+          }
+        }
+      },
+      "active": {
+        "container": {
+          "hover": {"backgroundColor": "#ffd07c70"},
+          "click": {"backgroundColor": "#ecb85c70"}
+        },
+        "svg": {
+          "styles": {
+            "default": {
+              "filter":
+                "brightness(0) saturate(100%) invert(49%) sepia(99%) saturate(477%) hue-rotate(343deg) brightness(100%) contrast(101%)"
+            }
+          }
+        }
+      }
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  microphone='{
+    "button": {
+      "default": {
+        "container": {
+          "hover": {"backgroundColor": "#7fbded69"},
+          "click": {"backgroundColor": "#4babf669"}
+        },
+        "svg": {
+          "styles": {
+            "default": {
+              "filter":
+                "brightness(0) saturate(100%) invert(49%) sepia(53%) saturate(6895%) hue-rotate(200deg) brightness(101%) contrast(101%)"
+            },
+            "hover": {
+              "filter":
+                "brightness(0) saturate(100%) invert(27%) sepia(59%) saturate(5655%) hue-rotate(203deg) brightness(101%) contrast(84%)"
+            }
+          }
+        }
+      },
+      "active": {
+        "container": {
+          "hover": {"backgroundColor": "#ffd07c70"},
+          "click": {"backgroundColor": "#ecb85c70"}
+        },
+        "svg": {
+          "styles": {
+            "default": {
+              "filter":
+                "brightness(0) saturate(100%) invert(49%) sepia(99%) saturate(477%) hue-rotate(343deg) brightness(100%) contrast(101%)"
+            }
+          }
+        }
+      }
+    }
+  }'
+  demo="true"
+  style="border-radius: 8px"
+  introMessage='{"text": "Use the microphone button to record audio."}'
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+:::tip
+You can use the [`CSSFilterConverter`](https://cssfilterconverter.com/) tool to generate filter values for the icon color.
+:::

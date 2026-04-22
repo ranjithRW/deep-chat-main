@@ -1,0 +1,213 @@
+import {AI, ERROR, FILES, HTML, ROLE, TEXT} from '../../../../utils/consts/messageConstants';
+import {CLASS_LIST, CREATE_ELEMENT} from '../../../../utils/consts/htmlConstants';
+import {ElementUtils} from '../../../../utils/element/elementUtils';
+import {MessageContentI} from '../../../../types/messagesInternal';
+import {DEFAULT} from '../../../../utils/consts/inputConstants';
+import {TextToSpeech} from '../textToSpeech/textToSpeech';
+import {MessageFile} from '../../../../types/messageFile';
+import {MessageElements, Messages} from '../messages';
+import {Response} from '../../../../types/response';
+import {MessageUtils} from '../utils/messageUtils';
+import {HTMLMessages} from '../html/htmlMessages';
+import {Stream} from '../../../../types/stream';
+import {MessagesBase} from '../messagesBase';
+import {HTMLUtils} from '../html/htmlUtils';
+import {
+  NO_VALID_STREAM_EVENTS_SENT,
+  INVALID_STREAM_EVENT_MIX,
+  INVALID_STREAM_EVENT,
+} from '../../../../utils/errorMessages/errorMessages';
+
+export class MessageStream {
+  static readonly MESSAGE_CLASS = 'streamed-message';
+  private static readonly PARTIAL_RENDER_MARK = '\n\n';
+  private readonly _partialRender?: boolean;
+  private readonly _messages: MessagesBase;
+  private _fileAdded = false;
+  private _streamType: 'text' | 'html' | '' = '';
+  private _elements?: MessageElements;
+  private _hasStreamEnded = false;
+  private _activeMessageRole?: string;
+  private _message?: MessageContentI;
+  private _endStreamAfterOperation?: boolean;
+  private _partialContent: string = '';
+  private _partialBubble?: HTMLDivElement;
+  private _targetWrapper?: HTMLElement;
+  private _sessionId?: string;
+
+  constructor(messages: MessagesBase, stream?: Stream) {
+    this._messages = messages;
+    if (typeof stream === 'object') {
+      this._partialRender = stream.partialRender;
+    }
+  }
+
+  public upsertStreamedMessage(response?: Response) {
+    if (this._hasStreamEnded) return;
+    if (response?.[TEXT] === undefined && response?.[HTML] === undefined) {
+      return console[ERROR](INVALID_STREAM_EVENT);
+    }
+    const content = response?.[TEXT] || response?.[HTML] || '';
+    const isScrollbarAtBottomOfElement = ElementUtils.isScrollbarAtBottomOfElement(this._messages.elementRef);
+    const streamType = response?.[TEXT] !== undefined ? TEXT : HTML;
+    if (!this._elements && !this._message) {
+      this.setInitialState(streamType, content, response?.[ROLE]);
+    } else if (this._streamType !== streamType) {
+      return console[ERROR](INVALID_STREAM_EVENT_MIX);
+    } else {
+      if (response?.[ROLE] && response?.[ROLE] !== this._activeMessageRole) {
+        this.finaliseStreamedMessage(false);
+        this.setInitialState(streamType, content, response?.[ROLE]);
+      } else {
+        this.updateBasedOnType(content, streamType, response?.overwrite);
+      }
+    }
+    if (response?._sessionId) this._sessionId = response?._sessionId;
+    if (response?.custom && this._message) this._message.custom = response.custom;
+    if (isScrollbarAtBottomOfElement && this._messages.autoScrollAllowed) ElementUtils.scrollToBottom(this._messages);
+  }
+
+  private setInitialState(streamType: 'text' | 'html', content: string, role?: string) {
+    this._streamType = streamType;
+    this._targetWrapper = undefined;
+    this._fileAdded = false;
+    this._partialContent = '';
+    this._partialBubble = undefined;
+    role ??= AI;
+    const customWrapper = this._messages._customWrappers?.[role] || this._messages._customWrappers?.[DEFAULT];
+    const initContent = customWrapper ? '' : content;
+    // does not overwrite previous message for simplicity as otherwise users would need to return first response with
+    // {..., overwrite: false} and others as {..., ovewrite: true} which would be too complex on their end
+    this._elements =
+      streamType === TEXT
+        ? this._messages.addNewTextMessage(initContent, role)
+        : HTMLMessages.add(this._messages, initContent, role);
+    if (this._elements) {
+      this._elements.bubbleElement[CLASS_LIST].add(MessageStream.MESSAGE_CLASS);
+      this._activeMessageRole = role;
+      this._message = {[ROLE]: this._activeMessageRole, [streamType]: initContent};
+      this._messages.messageToElements.push([this._message, {[streamType]: this._elements}]);
+      if (customWrapper) this.setTargetWrapperIfNeeded(this._elements, content, this._streamType, customWrapper);
+      this._messages.scrollButton?.updateHidden();
+    }
+  }
+
+  // not using existing htmlUtils htmlWrappers logic to be able to stream html
+  private setTargetWrapperIfNeeded(elements: MessageElements, content: string, streamType: string, customWrapper: string) {
+    elements.bubbleElement.innerHTML = customWrapper;
+    this._targetWrapper = HTMLUtils.getTargetWrapper(elements.bubbleElement);
+    if (this._elements) HTMLUtils.apply(this._messages, this._elements.bubbleElement);
+    this.updateBasedOnType(content, streamType);
+  }
+
+  private updateBasedOnType(content: string, expectedType: string, isOverwrite = false) {
+    const bubbleElement = (this._targetWrapper || this._elements?.bubbleElement) as HTMLElement;
+    if (!this._partialRender) MessageUtils.unfillEmptyMessageElement(bubbleElement, content);
+    const func = expectedType === TEXT ? this.updateText : this.updateHTML;
+    func.bind(this)(content, bubbleElement, isOverwrite);
+  }
+
+  private updateText(text: string, bubbleElement: HTMLElement, overwrite: boolean) {
+    if (!this._message) return;
+    this._message[TEXT] = overwrite ? text : this._message[TEXT] + text;
+    if (this._partialRender && this.isNewPartialRenderParagraph(bubbleElement, overwrite)) {
+      this.partialRenderNewParagraph(bubbleElement);
+    }
+    if (this._partialBubble) {
+      this.updatePartialRenderBubble(text);
+    } else {
+      this._messages.renderText(bubbleElement, this._message[TEXT]!);
+    }
+  }
+
+  private containsPartialRenderMark(content: string): boolean {
+    const markIndex = content.indexOf(MessageStream.PARTIAL_RENDER_MARK);
+    if (markIndex === -1) return false;
+    // Check if this is part of a markdown horizontal rule pattern - "a \n\n---\n\n a"
+    const textAfterMark = content.substring(markIndex + MessageStream.PARTIAL_RENDER_MARK.length);
+    return !textAfterMark.startsWith('---');
+  }
+
+  private isNewPartialRenderParagraph(bubbleElement: HTMLElement, isOverwrite: boolean) {
+    if (isOverwrite) {
+      bubbleElement.innerHTML = '';
+      return true;
+    }
+    const key = this._streamType as 'text' | 'html';
+    if (!this._partialBubble) {
+      const content = this._message?.[key];
+      return !!content && this.containsPartialRenderMark(content);
+    }
+    return !!this._partialContent && this.containsPartialRenderMark(this._partialContent);
+  }
+
+  private partialRenderNewParagraph(bubbleElement: HTMLElement) {
+    this._partialContent = '';
+    this._partialBubble = CREATE_ELEMENT() as HTMLDivElement;
+    this._partialBubble[CLASS_LIST].add('partial-render-message');
+    bubbleElement.appendChild(this._partialBubble);
+  }
+
+  private updatePartialRenderBubble(content: string) {
+    this._partialContent += content;
+    if (this._streamType === TEXT) {
+      this._messages.renderText(this._partialBubble as HTMLDivElement, this._partialContent);
+    } else {
+      (this._partialBubble as HTMLDivElement).innerHTML = this._partialContent;
+    }
+  }
+
+  private updateHTML(html: string, bubbleElement: HTMLElement, isOverwrite: boolean) {
+    if (!this._message) return;
+    this._message[HTML] = isOverwrite ? html : (this._message[HTML] || '') + html;
+    if (this._partialRender && this.isNewPartialRenderParagraph(bubbleElement, isOverwrite)) {
+      this.partialRenderNewParagraph(bubbleElement);
+    }
+    if (this._partialBubble) {
+      this.updatePartialRenderBubble(html);
+    } else {
+      if (isOverwrite) {
+        bubbleElement.innerHTML = html;
+      } else {
+        const wrapper = CREATE_ELEMENT('span');
+        wrapper.innerHTML = html;
+        bubbleElement.appendChild(wrapper);
+      }
+    }
+  }
+
+  public finaliseStreamedMessage(hasStreamEnded = true) {
+    if (this._endStreamAfterOperation) return;
+    if (this._fileAdded && !this._elements) return;
+    if (!this._elements) throw Error(NO_VALID_STREAM_EVENTS_SENT);
+    if (!this._message) return;
+    if (!this._elements.bubbleElement?.[CLASS_LIST].contains(MessageStream.MESSAGE_CLASS)) return;
+    if (this._streamType === TEXT) {
+      if (this._messages.textToSpeech) TextToSpeech.speak(this._message[TEXT] || '', this._messages.textToSpeech);
+    } else if (this._streamType === HTML) {
+      if (this._elements) HTMLUtils.apply(this._messages, this._elements.outerContainer);
+    }
+    this._elements.bubbleElement[CLASS_LIST].remove(MessageStream.MESSAGE_CLASS);
+    if (this._message) {
+      if (this._sessionId) this._message._sessionId = this._sessionId;
+      this._messages.sendClientUpdate(MessagesBase.createMessageContent(this._message), false);
+      this._messages.browserStorage?.addMessages(this._messages.messageToElements.map(([msg]) => msg));
+    }
+    this._hasStreamEnded = hasStreamEnded;
+  }
+
+  public markFileAdded() {
+    this._fileAdded = true;
+  }
+
+  // prettier-ignore
+  public async endStreamAfterFileDownloaded(
+      messages: Messages, downloadCb: () => Promise<{files?: MessageFile[]; text?: string}>) {
+    this._endStreamAfterOperation = true;
+    const {text, files} = await downloadCb();
+    if (text) this.updateBasedOnType(text, TEXT, true);
+    this._endStreamAfterOperation = false;
+    this.finaliseStreamedMessage();
+    if (files) messages.addNewMessage({[FILES]: files}); // adding later to trigger event later
+  }
+}

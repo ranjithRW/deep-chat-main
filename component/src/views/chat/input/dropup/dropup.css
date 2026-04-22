@@ -1,0 +1,97 @@
+.outside-end > #dropup-menu,
+.inside-end > #dropup-menu {
+  inset-inline-end: 0px;
+}
+
+#dropup-icon {
+  position: absolute;
+  pointer-events: none;
+  width: 1.16em;
+  height: 1.2em;
+  inset-inline-start: 0.265em;
+  bottom: 0.43em;
+  filter: brightness(0) saturate(100%) invert(54%) sepia(0%) saturate(724%) hue-rotate(6deg) brightness(92%) contrast(90%);
+}
+
+.dropup-button > * {
+  pointer-events: none;
+}
+
+#dropup-menu {
+  background-color: white;
+  position: absolute;
+  transform: translate(0px, -100%);
+  border-radius: 5px;
+  z-index: 1;
+  top: -0.49em;
+  box-shadow:
+    rgba(0, 0, 0, 0.2) -1px 2px 10px 0px,
+    rgba(0, 0, 0, 0.1) 0px 2px 4px 0px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dropup-menu-item {
+  height: 1.4em;
+  padding-inline-start: 0.35em;
+  padding-inline-end: 0.84em;
+  padding-top: 0.28em;
+  padding-bottom: 0.28em;
+  display: flex;
+  position: relative;
+}
+
+.dropup-menu-item:hover,
+.dropup-menu-item:focus-visible {
+  background-color: #f3f3f3;
+}
+
+.dropup-menu-item:active {
+  background-color: #ebebeb;
+}
+
+/* Bug fix for when the user clicks on an item then drags away the mouse which used to still display :active css */
+/* which applied default active css instead of user custom active css */
+.dropup-menu-item:active:not(:hover) {
+  background-color: transparent;
+}
+
+.dropup-menu-item:first-child {
+  padding-top: 0.49em;
+  border-start-start-radius: inherit;
+  border-start-end-radius: inherit;
+}
+
+.dropup-menu-item:last-child {
+  padding-bottom: 0.45em;
+  border-end-start-radius: inherit;
+  border-end-end-radius: inherit;
+}
+
+.dropup-menu-item-icon {
+  width: 1.39em;
+  position: relative;
+}
+
+.dropup-menu-item-icon > svg {
+  bottom: 0 !important;
+  top: 0 !important;
+  margin-bottom: auto;
+  margin-top: auto;
+}
+
+#dropup-menu-item-icon-element-custom {
+  position: absolute;
+  pointer-events: none;
+  width: 1.21em;
+  height: 1.21em;
+  inset-inline-start: 0.28em;
+  filter: brightness(0) saturate(100%) invert(15%) sepia(0%) saturate(337%) hue-rotate(125deg) brightness(91%)
+    contrast(94%);
+}
+
+.dropup-menu-item-text {
+  margin-inline-start: 0.56em;
+  margin-top: 0.08em;
+  width: max-content;
+}

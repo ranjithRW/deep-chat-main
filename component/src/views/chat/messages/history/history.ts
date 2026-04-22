@@ -1,0 +1,159 @@
+import {ERROR, SERVICE} from '../../../../utils/consts/messageConstants';
+import {CLASS_LIST, STYLE} from '../../../../utils/consts/htmlConstants';
+import {HistoryMessage, LoadHistory} from '../../../../types/history';
+import {ElementUtils} from '../../../../utils/element/elementUtils';
+import {MessageContentI} from '../../../../types/messagesInternal';
+import {MessageContent} from '../../../../types/messages';
+import {ServiceIO} from '../../../../services/serviceIO';
+import {Legacy} from '../../../../utils/legacy/legacy';
+import {MessageElements, Messages} from '../messages';
+import {MessageUtils} from '../utils/messageUtils';
+import {LoadingHistory} from './loadingHistory';
+import {DeepChat} from '../../../../deepChat';
+import {MessagesBase} from '../messagesBase';
+
+export class History {
+  private readonly _messages: Messages;
+  public static readonly FAILED_ERROR_MESSAGE = 'Failed to load history';
+  private _isLoading = false;
+  private _isPaginationComplete = false;
+  private _index = 0;
+
+  constructor(deepChat: DeepChat, messages: Messages, serviceIO: ServiceIO) {
+    this._messages = messages;
+    if (serviceIO.fetchHistory) this.fetchHistory(serviceIO.fetchHistory); // direct service
+    this.setupInitialHistory(deepChat);
+  }
+
+  private async fetchHistory(ioFetchHistory: Required<ServiceIO>['fetchHistory']) {
+    const loadingElements = LoadingHistory.addMessage(this._messages);
+    const history = await ioFetchHistory();
+    this._messages.removeMessage(loadingElements);
+    History.displayIntroMessages(this._messages.messageElementRefs);
+    history.forEach((message) => this._messages.addAnyMessage(message, true));
+    // https://github.com/OvidijusParsiunas/deep-chat/issues/84
+    setTimeout(() => ElementUtils.scrollToBottom(this._messages), 0);
+  }
+
+  private scrollToPreloadFirstEl(preLoadFirstMessageEl: HTMLElement, currentScrollTop: number) {
+    this._messages.elementRef.scrollTop = currentScrollTop + preLoadFirstMessageEl.offsetTop - 40;
+  }
+
+  private processLoadedHistory(historyMessages: HistoryMessage[]) {
+    const {messageElementRefs, messageToElements, elementRef} = this._messages;
+    const preLoadFirstMessageEl = messageElementRefs.find(
+      (messageElRefs) => !messageElRefs.outerContainer[CLASS_LIST].contains(MessagesBase.INTRO_CLASS)
+    )?.outerContainer;
+    const currentScrollTop = elementRef.scrollTop;
+    historyMessages
+      ?.reverse()
+      .map((message) => {
+        const messageContent = this._messages.addAnyMessage({...message, sendUpdate: true}, true, true);
+        if (messageContent) {
+          const messageBody = MessageUtils.generateMessageBody(messageContent, messageElementRefs, true);
+          messageToElements.unshift([messageContent, messageBody]);
+        }
+        return messageContent;
+      })
+      .filter((message) => !!message)
+      .reverse()
+      .forEach((message) => this._messages.sendClientUpdate(message as MessageContentI, true));
+    if (preLoadFirstMessageEl) {
+      if (this._messages.messageElementRefs.length >= this._messages.maxVisibleMessages) {
+        setTimeout(() => this.scrollToPreloadFirstEl(preLoadFirstMessageEl, currentScrollTop));
+      } else {
+        this.scrollToPreloadFirstEl(preLoadFirstMessageEl, currentScrollTop);
+      }
+    }
+  }
+
+  private populateMessages(loadingElements: MessageElements, messages: HistoryMessage[]) {
+    this._messages.removeMessage(loadingElements);
+    this._isPaginationComplete = messages.findIndex((message) => !message) < 0;
+    const messageContent = messages.filter((message) => !!message);
+    this.processLoadedHistory(messageContent);
+    const {messageElementRefs, avatar, name} = this._messages;
+    MessageUtils.resetAllRoleElements(messageElementRefs, avatar, name);
+  }
+
+  public async loadHistoryOnScroll(loadHistory: LoadHistory) {
+    if (this._isLoading || this._isPaginationComplete || this._messages.elementRef.scrollTop !== 0) return;
+    this._isLoading = true;
+    const loadingElements = LoadingHistory.addMessage(this._messages, false);
+    try {
+      const messages = await loadHistory(this._index++);
+      this.populateMessages(loadingElements, messages);
+      this._isLoading = false;
+    } catch (e) {
+      this._messages.removeMessage(loadingElements);
+      this._isPaginationComplete = true;
+      this._messages.addNewErrorMessage(SERVICE, History.FAILED_ERROR_MESSAGE, true);
+      console[ERROR](e);
+    }
+  }
+
+  private populateInitialHistory(history: MessageContent[]) {
+    history.forEach((message) => {
+      Legacy.processHistoryFile(message);
+      this._messages.addAnyMessage(message, true);
+    });
+  }
+
+  private async loadInitialHistory(loadHistory: LoadHistory) {
+    this._isLoading = true;
+    const loadingElements = LoadingHistory.addMessage(this._messages);
+    try {
+      const messages = await loadHistory(this._index++);
+      const scrollTop = this._messages.elementRef.scrollTop;
+      this.populateMessages(loadingElements, messages);
+      this.restoreScrollOrScrollToBottom(scrollTop === 0);
+    } catch (e) {
+      this._messages.removeMessage(loadingElements);
+      this._isPaginationComplete = true;
+      this._messages.addNewErrorMessage(SERVICE, History.FAILED_ERROR_MESSAGE, true);
+      console[ERROR](e);
+    }
+    History.displayIntroMessages(this._messages.messageElementRefs);
+    this._isLoading = false;
+  }
+
+  private async setupInitialHistory(deepChat: DeepChat) {
+    if (deepChat.loadHistory) {
+      this.loadInitialHistory(deepChat.loadHistory);
+    }
+    const browserStorageData = this._messages.browserStorage?.get();
+    const history = deepChat.history || Legacy.processHistory(deepChat) || browserStorageData?.messages;
+    if (history) {
+      this.populateInitialHistory(history);
+      this.restoreScrollOrScrollToBottom(true);
+      this._index += 1;
+    }
+  }
+
+  private restoreScrollOrScrollToBottom(shouldScrollToBottom: boolean) {
+    const savedScrollHeight = this._messages.browserStorage?.get()?.scrollHeight;
+    if (savedScrollHeight !== undefined && this._messages.browserStorage?.trackScrollHeight) {
+      setTimeout(() => {
+        this._messages.elementRef.scrollTop = savedScrollHeight;
+      }, 0);
+    } else if (shouldScrollToBottom) {
+      setTimeout(() => ElementUtils.scrollToBottom(this._messages), 0);
+    }
+  }
+
+  public static addErrorPrefix(io: ServiceIO) {
+    io.permittedErrorPrefixes ??= [];
+    io.permittedErrorPrefixes.push(History.FAILED_ERROR_MESSAGE);
+  }
+
+  private static displayIntroMessages(messageElementRefs: MessageElements[]) {
+    for (let i = 0; i < messageElementRefs.length; i += 1) {
+      const messageEls = messageElementRefs[0];
+      if (messageEls.outerContainer[CLASS_LIST].contains(MessagesBase.INTRO_CLASS)) {
+        messageEls.outerContainer[STYLE].display = '';
+      } else {
+        break;
+      }
+    }
+  }
+}

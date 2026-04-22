@@ -1,0 +1,284 @@
+---
+sidebar_position: 17
+---
+
+# Open WebUI
+
+import openWebUILogo from '/img/openWebUILogo.png';
+
+# <img src={openWebUILogo} className="adaptive-logo-filter" width="74" style={{float: 'left', marginTop: '-8px', marginLeft: '-14px'}} /><span className="direct-service-title">Open WebUI</span>
+
+Properties used to connect to [Open WebUI](https://openwebui.com/).
+
+### `openWebUI` {#openWebUI}
+
+- Type: `true` | \{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `model?: string`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `system_prompt?: string`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `tool_ids?: string[]`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `tools?: object[]`, <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; [`function_handler?: FunctionHandler`](#FunctionHandler), <br />
+  &nbsp;&nbsp;&nbsp;&nbsp; `files?:` `{type: "file"|"collection"; id: string}[]` <br />
+  \}
+- Default: _\{model: "llama3.2"\}_
+
+import ContainersKeyToggleChatFunction from '@site/src/components/table/containersKeyToggleChatFunction';
+import ContainersKeyToggle from '@site/src/components/table/containersKeyToggle';
+import ComponentContainer from '@site/src/components/table/componentContainer';
+import DeepChatBrowser from '@site/src/components/table/deepChatBrowser';
+import LineBreak from '@site/src/components/markdown/lineBreak';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
+
+<BrowserOnly>{() => require('@site/src/components/nav/autoNavToggle').readdAutoNavShadowToggle()}</BrowserOnly>
+
+Connect to Open WebUI's [Chat Completions API](https://docs.openwebui.com/getting-started/api-endpoints/). You can set this property to _true_ or configure it using an object: <br />
+`model` is the name of the model to be used by the API. This should match a model available in your Open WebUI instance. <br />
+`system_prompt` provides behavioral context and instructions to the model. <br />
+`tool_ids` are IDs of tools configured in Open WebUI that should be available to the model. <br />
+`tools` array of function definitions that the model can call. <br />
+[`function_handler`](#FunctionHandler) enables function calling capabilities for tool use. <br />
+`files` array of file or collection references from the Open WebUI [knowledge base](https://docs.openwebui.com/features/workspace/knowledge). <br />
+
+#### Example
+
+<ContainersKeyToggle>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        openWebUI: {
+          key: 'placeholder key',
+          system_prompt: 'You are a helpful assistant.',
+          model: 'llama3.2:latest',
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        openWebUI: {
+          model: 'llama3.2:latest',
+        },
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+</ContainersKeyToggle>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  directConnection='{
+    "openWebUI": {
+      "key": "placeholder key",
+      "model": "llama3.2:latest"
+    }
+  }'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  directConnection='{
+    "openWebUI": {
+      "key": "placeholder key",
+      "model": "llama3.2:latest"
+    }
+  }'
+  style="border-radius: 8px"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+:::info
+Use [`stream`](/docs/connect#Stream) to stream the AI responses.
+:::
+
+<LineBreak></LineBreak>
+
+#### Custom URL Example
+
+By default, the connection uses `http://localhost:3000/api/chat/completions`. You can specify a custom URL using the [`connect`](/docs/connect) property:
+
+<ContainersKeyToggle>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        openWebUI: {
+          key: 'placeholder key',
+        },
+      }}
+      connect={{
+        url: 'https://your-openwebui-instance.com/api/chat/completions',
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+  <ComponentContainer>
+    <DeepChatBrowser
+      style={{borderRadius: '8px'}}
+      directConnection={{
+        openWebUI: true,
+      }}
+      connect={{
+        url: 'https://your-openwebui-instance.com/api/chat/completions',
+      }}
+    ></DeepChatBrowser>
+  </ComponentContainer>
+</ContainersKeyToggle>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```html
+<deep-chat
+  directConnection='{"openWebUI": true}'
+  connect='{"url": "https://your-openwebui-instance.com/api/chat/completions"}'
+></deep-chat>
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```html
+<!-- This example is for Vanilla JS and should be tailored to your framework (see Examples) -->
+
+<deep-chat
+  directConnection='{
+    "openWebUI": {"key": "placeholder key"}
+  }'
+  connect='{"url": "https://your-openwebui-instance.com/api/chat/completions"}'
+  style="border-radius: 8px"
+></deep-chat>
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>
+
+## Tool Calling
+
+Open WebUI supports [tool calling](https://docs.openwebui.com/features/plugin/tools/) functionality:
+
+### `FunctionHandler` {#FunctionHandler}
+
+- Type: ([`functionsDetails: FunctionsDetails`](/docs/directConnection#FunctionsDetails)) => `{response: string}[]` | `{text: string}`
+
+The actual function that the component will call if the model wants to use tools. <br />
+[`functionsDetails`](/docs/directConnection#FunctionsDetails) contains information about what tool functions should be called. <br />
+This function should either return an array of JSONs containing a `response` property for each tool function (in the same order as in [`functionsDetails`](/docs/directConnection#FunctionsDetails))
+which will feed it back into the model to finalize a response, or return a JSON containing `text` which will immediately display it in the chat.
+
+#### Example
+
+<ContainersKeyToggleChatFunction service="openWebUI"></ContainersKeyToggleChatFunction>
+
+<Tabs>
+<TabItem value="js" label="Sample code">
+
+```js
+// using JavaScript for a simplified example
+
+chatElementRef.directConnection = {
+  openWebUI: {
+    tools: [
+      {
+        type: 'function',
+        function: {
+          name: 'get_current_weather',
+          description: 'Get the current weather in a given location',
+          parameters: {
+            type: 'object',
+            properties: {
+              location: {
+                type: 'string',
+                description: 'The city and state, e.g. San Francisco, CA',
+              },
+              unit: {type: 'string', enum: ['celsius', 'fahrenheit']},
+            },
+            required: ['location'],
+          },
+        },
+      },
+    ],
+    function_handler: (functionsDetails) => {
+      return functionsDetails.map((functionDetails) => {
+        return {
+          response: getCurrentWeather(functionDetails.arguments),
+        };
+      });
+    },
+  },
+};
+```
+
+</TabItem>
+<TabItem value="py" label="Full code">
+
+```js
+// using JavaScript for a simplified example
+
+chatElementRef.directConnection = {
+  openWebUI: {
+    tools: [
+      {
+        type: 'function',
+        function: {
+          name: 'get_current_weather',
+          description: 'Get the current weather in a given location',
+          parameters: {
+            type: 'object',
+            properties: {
+              location: {
+                type: 'string',
+                description: 'The city and state, e.g. San Francisco, CA',
+              },
+              unit: {type: 'string', enum: ['celsius', 'fahrenheit']},
+            },
+            required: ['location'],
+          },
+        },
+      },
+    ],
+    function_handler: (functionsDetails) => {
+      return functionsDetails.map((functionDetails) => {
+        return {
+          response: getCurrentWeather(functionDetails.arguments),
+        };
+      });
+    },
+  },
+  key: 'placeholder-key',
+};
+
+function getCurrentWeather(location) {
+  location = location.toLowerCase();
+  if (location.includes('tokyo')) {
+    return JSON.stringify({location, temperature: '10', unit: 'celsius'});
+  } else if (location.includes('san francisco')) {
+    return JSON.stringify({location, temperature: '72', unit: 'fahrenheit'});
+  } else {
+    return JSON.stringify({location, temperature: '22', unit: 'celsius'});
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+<LineBreak></LineBreak>

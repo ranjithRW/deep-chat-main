@@ -1,0 +1,43 @@
+export const INSIDE_START = 'inside-start';
+
+export const INSIDE_END = 'inside-end';
+
+export const OUTSIDE_START = 'outside-start';
+
+export const OUTSIDE_END = 'outside-end';
+
+export const DROPUP_MENU = 'dropup-menu';
+
+export const DEFAULT = 'default';
+
+export const HOVER = 'hover';
+
+export const CLICK = 'click';
+
+export const ACTIVE = 'active';
+
+export const DISABLED = 'disabled';
+
+export const SVG = 'svg';
+
+export const UNAVAILABLE = 'unavailable';
+
+export const STYLES = 'styles';
+
+export const MOUSEENTER = 'mouseenter';
+
+export const MOUSELEAVE = 'mouseleave';
+
+export const MOUSEDOWN = 'mousedown';
+
+export const MOUSEUP = 'mouseup';
+
+export const SUBMIT = 'submit';
+
+export const LOADING = 'loading';
+
+export const STOP = 'stop';
+
+export const UNSUPPORTED = 'unsupported';
+
+export const COMMAND_MODE = 'commandMode';

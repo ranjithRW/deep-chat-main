@@ -1,0 +1,147 @@
+import {AI, ERROR, HTML, ROLE, SERVICE, STRING, STRINGIFY, TEXT} from '../consts/messageConstants';
+import {MessageStream} from '../../views/chat/messages/stream/messageStream';
+import {CustomHandler, IWebsocketHandler} from './customHandler';
+import {INVALID_RESPONSE} from '../errorMessages/errorMessages';
+import {OBJECT} from '../../services/utils/serviceConstants';
+import {Messages} from '../../views/chat/messages/messages';
+import {ServiceIO} from '../../services/serviceIO';
+import {StreamConfig} from '../../types/stream';
+import {Response} from '../../types/response';
+import {RequestUtils} from './requestUtils';
+import {DeepChat} from '../../deepChat';
+import {Demo} from '../demo/demo';
+import {Stream} from './stream';
+
+export type RoleToStream = {[role: string]: MessageStream};
+
+export class Websocket {
+  public static setup(io: ServiceIO) {
+    io.permittedErrorPrefixes = ['Connection error', 'Error in server message'];
+    io.websocket = 'pending'; // main reason why not connecting here is because messages is not available yet
+  }
+
+  private static isElementPresentInDOM(deepChat: DeepChat) {
+    // to make sure that reconnection is not happening when component removed
+    // this particular check also works if DeepChat is inside a shadow DOM elem
+    // https://github.com/OvidijusParsiunas/deep-chat/pull/194
+    return !!(deepChat.getRootNode({composed: true}) instanceof Document);
+  }
+
+  public static createConnection(io: ServiceIO, messages: Messages) {
+    if (!Websocket.isElementPresentInDOM(io.deepChat)) return;
+    const websocketConfig = io.connectSettings.websocket;
+    if (!websocketConfig) return;
+    if (io.connectSettings.handler) return CustomHandler.websocket(io, messages);
+    try {
+      const protocols = typeof websocketConfig !== 'boolean' ? websocketConfig : undefined;
+      // this will throw an error when url doesn't start with 'ws:'
+      const websocket = new WebSocket(io.connectSettings.url || '', protocols);
+      io.websocket = websocket;
+      io.websocket.onopen = () => {
+        messages.removeError();
+        if (io.websocket && typeof io.websocket === OBJECT) Websocket.assignListeners(io, websocket, messages);
+        io.deepChat._validationHandler?.();
+      };
+      io.websocket.onerror = (event) => {
+        console[ERROR](event);
+        Websocket.retryConnection(io, messages);
+      };
+    } catch (error) {
+      console[ERROR](error);
+      Websocket.retryConnection(io, messages);
+    }
+  }
+
+  private static retryConnection(io: ServiceIO, messages: Messages) {
+    io.deepChat._validationHandler?.();
+    if (!Websocket.isElementPresentInDOM(io.deepChat)) return;
+    io.websocket = 'pending';
+    if (!messages.isLastMessageError()) messages.addNewErrorMessage(SERVICE, 'Connection error');
+    setTimeout(() => {
+      Websocket.createConnection(io, messages);
+    }, 5000);
+  }
+
+  private static assignListeners(io: ServiceIO, ws: WebSocket, messages: Messages) {
+    const roleToStream = {} as RoleToStream;
+    ws.onmessage = async (message) => {
+      if (!io.extractResultData) return; // this return should theoretically not execute
+      try {
+        const result: Response = JSON.parse(message.data);
+        const finalResult = await RequestUtils.basicResponseProcessing(messages, result, {io, displayError: false});
+        if (!finalResult) {
+          throw Error(INVALID_RESPONSE(result, 'server', !!io.deepChat.responseInterceptor, finalResult));
+        }
+        if (Stream.isSimulation(io.stream)) {
+          const upsertFunc = Websocket.stream.bind(this, io, messages, roleToStream);
+          const stream = roleToStream[result[ROLE] || AI];
+          Stream.upsertContent(messages, upsertFunc, stream, finalResult);
+        } else {
+          const messageDataArr = Array.isArray(finalResult) ? finalResult : [finalResult];
+          const errorMessage = messageDataArr.find((message) => typeof message[ERROR] === STRING);
+          if (errorMessage) throw errorMessage[ERROR];
+          messageDataArr.forEach((data) => messages.addNewMessage(data));
+        }
+      } catch (error) {
+        RequestUtils.displayError(messages, error as object, 'Error in server message');
+      }
+    };
+    ws.onclose = () => {
+      console[ERROR]('Connection closed');
+      // this is used to prevent two error messages displayed when websocket throws error and close events at the same time
+      if (!messages.isLastMessageError()) messages.addNewErrorMessage(SERVICE, 'Connection error');
+      if (io.stream) io.streamHandlers.onAbort?.();
+      Websocket.createConnection(io, messages);
+    };
+  }
+
+  public static async sendWebsocket(io: ServiceIO, body: object, messages: Messages, stringifyBody = true) {
+    if (io.connectSettings?.url === Demo.URL) return Demo.request(io, messages);
+    const ws = io.websocket;
+    if (!ws || ws === 'pending') return;
+    const requestDetails = {body, headers: io.connectSettings?.headers};
+    const {body: interceptedBody, error} = await RequestUtils.processRequestInterceptor(io.deepChat, requestDetails);
+    if (error) return messages.addNewErrorMessage(SERVICE, error);
+    if (!Websocket.isWebSocket(ws)) return ws.newUserMessage.listener(interceptedBody);
+    const processedBody = stringifyBody ? STRINGIFY(interceptedBody) : interceptedBody;
+    if (ws.readyState === undefined || ws.readyState !== ws.OPEN) {
+      console[ERROR]('Connection is not open');
+      if (!messages.isLastMessageError()) messages.addNewErrorMessage(SERVICE, 'Connection error');
+    } else {
+      ws.send(STRINGIFY(processedBody));
+      io.completionsHandlers.onFinish();
+    }
+  }
+
+  public static canSendMessage(websocket: ServiceIO['websocket']) {
+    if (!websocket) return true;
+    if (websocket === 'pending') return false;
+    if (Websocket.isWebSocket(websocket)) {
+      return websocket.readyState !== undefined && websocket.readyState === websocket.OPEN;
+    }
+    return websocket.isOpen;
+  }
+
+  // if false then it is the internal websocket handler
+  private static isWebSocket(websocket: WebSocket | IWebsocketHandler): websocket is WebSocket {
+    return (websocket as WebSocket).send !== undefined;
+  }
+
+  public static stream(io: ServiceIO, messages: Messages, roleToStream: RoleToStream, result?: Response) {
+    if (!result) return;
+    const simulation = (io.stream as StreamConfig).simulation;
+    if (typeof simulation === STRING) {
+      const role = result[ROLE] || AI;
+      const stream = roleToStream[role];
+      if (result[TEXT] === simulation || result[HTML] === simulation) {
+        stream?.finaliseStreamedMessage();
+        delete roleToStream[role];
+      } else {
+        roleToStream[role] ??= new MessageStream(messages, io.stream);
+        roleToStream[role].upsertStreamedMessage(result);
+      }
+    } else {
+      Stream.simulate(messages, io.streamHandlers, result);
+    }
+  }
+}

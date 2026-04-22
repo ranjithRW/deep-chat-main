@@ -1,0 +1,76 @@
+#messages,
+.deep-chat-upwards-mode #messages > div {
+  overflow: auto;
+  /* prevents the browser from automatically scrolling to keep expanding heights in view
+  which prevents streamAutoScroll: false from working correctly */
+  overflow-anchor: none;
+}
+
+.deep-chat-upwards-mode #messages {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.outer-message-container:last-child {
+  margin-bottom: 5px;
+}
+
+.inner-message-container {
+  display: flex;
+  margin-inline: auto;
+  width: calc(97.5% - 24px);
+  max-width: 100%;
+}
+
+.message-bubble {
+  margin-top: 10px;
+  word-wrap: break-word;
+  width: fit-content;
+  max-width: 60%;
+  border-radius: 10px;
+  padding: 0.42em 0.55em;
+  height: fit-content;
+  line-height: 1.26;
+}
+
+.user-message-text {
+  color: white;
+  background-color: #0084ff;
+  margin-inline-end: 0px;
+  margin-inline-start: auto;
+}
+
+.ai-message-text {
+  color: black;
+  background-color: #e4e6eb;
+  margin-inline-start: 0px;
+  margin-inline-end: auto;
+}
+
+.deep-chat-last-group-messages-active {
+  height: 100%;
+}
+
+#scroll-button {
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  right: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.1s ease;
+  display: flex;
+  opacity: 0;
+  padding: 8px;
+  background-color: white;
+  border: 0.5px solid #000000;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+#scroll-button:hover {
+  background-color: #fafafa;
+}

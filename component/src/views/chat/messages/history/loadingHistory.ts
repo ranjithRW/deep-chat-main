@@ -1,0 +1,86 @@
+import {AI, DEEP_COPY, HTML, MESSAGES_ID} from '../../../../utils/consts/messageConstants';
+import {CLASS_LIST, CREATE_ELEMENT} from '../../../../utils/consts/htmlConstants';
+import {LoadingStyle} from '../../../../utils/loading/loadingStyle';
+import {MessageElementsStyles} from '../../../../types/messages';
+import {STYLES} from '../../../../utils/consts/inputConstants';
+import {MessageElements, Messages} from '../messages';
+import {MessageUtils} from '../utils/messageUtils';
+import {HTMLMessages} from '../html/htmlMessages';
+import {MessagesBase} from '../messagesBase';
+
+export class LoadingHistory {
+  public static readonly CLASS = 'loading-history-message';
+  private static readonly FULL_VIEW_CLASS = 'loading-history-message-full-view';
+  private static readonly SMALL_CLASS = 'loading-history-message-small';
+
+  private static generateLoadingRingElement() {
+    const loadingRingElement = CREATE_ELEMENT();
+    loadingRingElement[CLASS_LIST].add('loading-history');
+    loadingRingElement.appendChild(CREATE_ELEMENT());
+    loadingRingElement.appendChild(CREATE_ELEMENT());
+    loadingRingElement.appendChild(CREATE_ELEMENT());
+    loadingRingElement.appendChild(CREATE_ELEMENT());
+    return loadingRingElement;
+  }
+
+  private static apply(messages: MessagesBase, messageElements: MessageElements, styles?: MessageElementsStyles) {
+    LoadingStyle.setRing(messageElements.bubbleElement, styles?.bubble);
+    if (styles?.bubble) {
+      styles = DEEP_COPY(styles) as MessageElementsStyles;
+      delete styles.bubble; // removing bubble styling as above uses it
+    }
+    messages.applyCustomStyles(messageElements, 'history', false, styles);
+  }
+
+  private static addLoadHistoryMessage(messageElements: MessageElements, messages: Messages, isInitial = true) {
+    messageElements.bubbleElement[CLASS_LIST].add(LoadingHistory.CLASS);
+    const viewClass = isInitial ? LoadingHistory.FULL_VIEW_CLASS : LoadingHistory.SMALL_CLASS;
+    messageElements.outerContainer[CLASS_LIST].add(viewClass);
+    const styles = isInitial
+      ? messages.messageStyles?.loading?.history?.full?.[STYLES]
+      : messages.messageStyles?.loading?.history?.small?.[STYLES];
+    LoadingHistory.apply(messages, messageElements, styles);
+    let messagesElement = messages.elementRef;
+    if (isInitial && messages.elementRef.id !== MESSAGES_ID) {
+      messagesElement = messages.elementRef.parentElement as HTMLElement;
+    }
+    messagesElement?.prepend(messageElements.outerContainer);
+  }
+
+  public static createDefaultElements(messages: Messages) {
+    const messageElements = messages.createMessageElements('', AI);
+    const {bubbleElement} = messageElements;
+    const loadingRingElement = LoadingHistory.generateLoadingRingElement();
+    bubbleElement.appendChild(loadingRingElement);
+    return messageElements;
+  }
+
+  public static addMessage(messages: Messages, isInitial = true) {
+    const html = messages.messageStyles?.loading?.history?.full?.[HTML];
+    const messageElements = html
+      ? HTMLMessages.createElements(messages, html, AI, true, true)
+      : LoadingHistory.createDefaultElements(messages);
+    LoadingHistory.addLoadHistoryMessage(messageElements, messages, isInitial);
+    MessageUtils.softRemRoleElements(messageElements.innerContainer, messages.avatar, messages.name);
+    return messageElements;
+  }
+
+  private static tryChangeViewToSmall(messages: MessagesBase, messageElements?: MessageElements) {
+    if (messageElements?.outerContainer[CLASS_LIST].contains(LoadingHistory.FULL_VIEW_CLASS)) {
+      messageElements.outerContainer[CLASS_LIST].replace(LoadingHistory.FULL_VIEW_CLASS, LoadingHistory.SMALL_CLASS);
+      const styles = messages.messageStyles?.loading?.history?.small?.[STYLES];
+      if (styles) LoadingHistory.apply(messages, messageElements, styles);
+      const html = messages.messageStyles?.loading?.history?.small?.[HTML];
+      if (html) messageElements.bubbleElement.innerHTML = html;
+      return true;
+    }
+    return false;
+  }
+
+  public static changeFullViewToSmall(messages: MessagesBase) {
+    const lastElement = messages.messageElementRefs[messages.messageElementRefs.length - 1];
+    const isChanged = LoadingHistory.tryChangeViewToSmall(messages, lastElement);
+    // last element is usually sufficient, however in demo the full view element is added before other elements
+    if (!isChanged) LoadingHistory.tryChangeViewToSmall(messages, messages.messageElementRefs[0]);
+  }
+}

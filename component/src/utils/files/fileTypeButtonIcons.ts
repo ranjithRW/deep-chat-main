@@ -1,0 +1,21 @@
+import {MIXED_FILES_ICON_STRING} from '../../icons/mixedFilesIcon';
+import {AUDIO, GIFS, IMAGES} from '../consts/messageConstants';
+import {IMAGE_ICON_STRING} from '../../icons/imageIcon';
+import {AUDIO_ICON_STRING} from '../../icons/audioIcon';
+import {GIF_ICON_STRING} from '../../icons/gifIcon';
+import {FILE_TYPE} from '../../types/fileTypes';
+
+type ServiceFileTypes = {
+  [key in FILE_TYPE]: {
+    id: string;
+    svgString: string;
+    dropupText: string;
+  };
+};
+
+export const FILE_TYPE_BUTTON_ICONS: ServiceFileTypes = {
+  [IMAGES]: {id: 'upload-images-icon', svgString: IMAGE_ICON_STRING, dropupText: 'Image'},
+  [GIFS]: {id: 'upload-gifs-icon', svgString: GIF_ICON_STRING, dropupText: 'GIF'},
+  [AUDIO]: {id: 'upload-audio-icon', svgString: AUDIO_ICON_STRING, dropupText: 'Audio'},
+  mixedFiles: {id: 'upload-mixed-files-icon', svgString: MIXED_FILES_ICON_STRING, dropupText: 'File'},
+};

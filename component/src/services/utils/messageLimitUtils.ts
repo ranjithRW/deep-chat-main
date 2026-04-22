@@ -1,0 +1,40 @@
+import {DEEP_COPY, TEXT} from '../../utils/consts/messageConstants';
+import {MessageContentI} from '../../types/messagesInternal';
+import {LENGTH} from '../../utils/consts/htmlConstants';
+
+export class MessageLimitUtils {
+  public static getCharacterLimitMessages(messages: MessageContentI[], limit: number) {
+    if (limit === -1) return messages;
+    let totalCharacters = 0;
+    let i = messages[LENGTH] - 1;
+    for (i; i >= 0; i -= 1) {
+      const text = messages[i]?.[TEXT];
+      if (text !== undefined) {
+        totalCharacters += text[LENGTH];
+        if (totalCharacters > limit) {
+          messages[i][TEXT] = text.substring(0, text[LENGTH] - (totalCharacters - limit));
+          break;
+        }
+      }
+    }
+    return messages.slice(Math.max(i, 0));
+  }
+
+  private static getMaxMessages(messages: MessageContentI[], maxMessages: number) {
+    return messages.slice(Math.max(messages[LENGTH] - maxMessages, 0));
+  }
+
+  // if maxMessages is not defined we send all messages
+  // if maxMessages above 0 we send that number
+  // if maxMessages 0 or below we send only what is in the request
+  public static processMessages(messages: MessageContentI[], maxMessages?: number, totalMessagesMaxCharLength?: number) {
+    if (maxMessages !== undefined) {
+      if (maxMessages > 0) messages = MessageLimitUtils.getMaxMessages(messages, maxMessages);
+    } else {
+      messages = [messages[messages[LENGTH] - 1]]; // last message
+    }
+    messages = DEEP_COPY(messages);
+    if (totalMessagesMaxCharLength === undefined) return messages;
+    return MessageLimitUtils.getCharacterLimitMessages(messages, totalMessagesMaxCharLength);
+  }
+}

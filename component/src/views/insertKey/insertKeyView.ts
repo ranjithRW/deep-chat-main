@@ -1,0 +1,141 @@
+import {CLASS_LIST, CREATE_ELEMENT, STYLE} from '../../utils/consts/htmlConstants';
+import {KeyVerificationHandlers, ServiceIO} from '../../services/serviceIO';
+import {KEYBOARD_KEY} from '../../utils/buttons/keyboardKeys';
+import {LOADING} from '../../utils/consts/inputConstants';
+import {TYPE} from '../../utils/consts/messageConstants';
+import {VisibilityIcon} from './visibilityIcon';
+
+export class InsertKeyView {
+  private static createCautionText() {
+    const cautionElement = CREATE_ELEMENT('a');
+    cautionElement[CLASS_LIST].add('insert-key-input-help-text');
+    cautionElement.innerText =
+      'Please exercise CAUTION when inserting your API key outside of deepchat.dev or localhost!!';
+    return cautionElement;
+  }
+
+  private static createHelpLink(keyHelpUrl: string) {
+    const helpElement = CREATE_ELEMENT('a') as HTMLAnchorElement;
+    helpElement[CLASS_LIST].add('insert-key-input-help-text');
+    helpElement.href = keyHelpUrl;
+    helpElement.innerText = 'Find more info here';
+    helpElement.target = '_blank';
+    return helpElement;
+  }
+
+  private static createFailText() {
+    const failElement = CREATE_ELEMENT();
+    failElement.id = 'insert-key-input-invalid-text';
+    failElement[STYLE].display = 'none';
+    return failElement;
+  }
+
+  private static createHelpTextContainer(keyHelpUrl?: string, displayCaution = true) {
+    const helpTextContainerElement = CREATE_ELEMENT();
+    helpTextContainerElement.id = 'insert-key-help-text-container';
+    const helpTextContentsElement = CREATE_ELEMENT();
+    helpTextContentsElement.id = 'insert-key-help-text-contents';
+    const failTextElement = InsertKeyView.createFailText();
+    helpTextContentsElement.appendChild(failTextElement);
+    if (keyHelpUrl) {
+      const helpLinkElement = InsertKeyView.createHelpLink(keyHelpUrl);
+      helpTextContentsElement.appendChild(helpLinkElement);
+    }
+    if (displayCaution === true) {
+      const cautionTextElement = InsertKeyView.createCautionText();
+      helpTextContentsElement.appendChild(cautionTextElement);
+    }
+    helpTextContainerElement.appendChild(helpTextContentsElement);
+    return {helpTextContainerElement, failTextElement};
+  }
+
+  private static onFail(inputEl: HTMLInputElement, startEl: HTMLElement, failTextEl: HTMLElement, message: string) {
+    inputEl[CLASS_LIST].replace('insert-key-input-valid', 'insert-key-input-invalid');
+    failTextEl.innerText = message;
+    failTextEl[STYLE].display = 'block';
+    startEl.innerText = 'Start';
+    inputEl[CLASS_LIST].remove(LOADING);
+  }
+
+  private static onLoad(inputEl: HTMLInputElement, startEl: HTMLElement) {
+    inputEl[CLASS_LIST].add(LOADING);
+    startEl.innerHTML = '<div id="loading-key"></div>';
+  }
+
+  // prettier-ignore
+  private static verifyKey(inputElement: HTMLInputElement, keyVerificationHandlers: KeyVerificationHandlers,
+      serviceIO: ServiceIO) {
+    const key = inputElement.value.trim();
+    serviceIO.verifyKey(key, keyVerificationHandlers);
+  }
+
+  // prettier-ignore
+  private static addVerificationEvents(inputEl: HTMLInputElement, startEl: HTMLElement, failTextEl: HTMLElement,
+      changeToChat: () => void, serviceIO: ServiceIO) {
+    const keyVerificationHandlers: KeyVerificationHandlers = {
+      onSuccess: changeToChat,
+      onFail: InsertKeyView.onFail.bind(this, inputEl, startEl, failTextEl),
+      onLoad: InsertKeyView.onLoad.bind(this, inputEl, startEl),
+    };
+    const verifyKeyFunc = InsertKeyView.verifyKey.bind(this, inputEl, keyVerificationHandlers, serviceIO);
+    startEl.onclick = verifyKeyFunc;
+    inputEl.onkeydown = (event) => {
+      if (!inputEl[CLASS_LIST].contains(LOADING) && event.key === KEYBOARD_KEY.ENTER) verifyKeyFunc();
+    };
+  }
+
+  private static createStartButton() {
+    const startButtonElement = CREATE_ELEMENT();
+    startButtonElement.id = 'start-button';
+    startButtonElement.innerText = 'Start';
+    return startButtonElement;
+  }
+
+  private static onInputFocus(event: FocusEvent) {
+    (event.target as HTMLInputElement)[CLASS_LIST].replace('insert-key-input-invalid', 'insert-key-input-valid');
+  }
+
+  private static createInput(placeholderText?: string) {
+    const inputContainer = CREATE_ELEMENT();
+    inputContainer.id = 'insert-key-input-container';
+    const inputElement = CREATE_ELEMENT('input') as HTMLInputElement;
+    inputElement.id = 'insert-key-input';
+    inputElement.placeholder = placeholderText || 'API Key';
+    inputElement[TYPE] = 'password';
+    inputElement[CLASS_LIST].add('insert-key-input-valid');
+    inputElement.onfocus = InsertKeyView.onInputFocus;
+    inputContainer.appendChild(inputElement);
+    return inputContainer;
+  }
+
+  // prettier-ignore
+  private static createContents(changeToChat: () => void, serviceIO: ServiceIO) {
+    const contentsElement = CREATE_ELEMENT();
+    contentsElement.id = 'insert-key-contents';
+    const inputContainerElement = InsertKeyView.createInput(serviceIO.insertKeyPlaceholderText);
+    const inputElement = inputContainerElement.children[0] as HTMLInputElement;
+    const iconContainerElement = VisibilityIcon.create(inputElement);
+    inputContainerElement.appendChild(iconContainerElement);
+    contentsElement.appendChild(inputContainerElement);
+    const startButton = InsertKeyView.createStartButton();
+    const {helpTextContainerElement, failTextElement} = InsertKeyView.createHelpTextContainer(
+      serviceIO.keyHelpUrl, serviceIO.deepChat._insertKeyViewStyles?.displayCautionText);
+    contentsElement.appendChild(startButton);
+    contentsElement.appendChild(helpTextContainerElement);
+    InsertKeyView.addVerificationEvents(inputElement, startButton, failTextElement, changeToChat, serviceIO);
+    return contentsElement;
+  }
+
+  private static createElements(changeToChat: () => void, serviceIO: ServiceIO) {
+    const containerElement = CREATE_ELEMENT();
+    containerElement.id = 'insert-key-view';
+    const contentsElement = InsertKeyView.createContents(changeToChat, serviceIO);
+    containerElement.appendChild(contentsElement);
+    return containerElement;
+  }
+
+  public static render(containerRef: HTMLElement, changeToChat: () => void, serviceIO: ServiceIO) {
+    const containerElement = InsertKeyView.createElements(changeToChat, serviceIO);
+    containerRef.replaceChildren(containerElement);
+  }
+}

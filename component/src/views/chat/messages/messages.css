@@ -1,0 +1,202 @@
+@import url('./remarkable/a11y-dark.min.css');
+@import url('./messagesBase.css');
+@import url('./history/loadingHistory.css');
+
+.html-message {
+  max-width: unset;
+}
+
+.error-message-text {
+  margin-inline: auto;
+  background-color: #f4c0c0;
+  color: #474747;
+  text-align: center;
+  max-width: 95%;
+  margin-top: 14px;
+  margin-bottom: 10px;
+}
+
+.deep-chat-loading-message-dots-container {
+  width: 1em;
+  padding-top: 0.6em;
+  padding-bottom: 0.6em;
+  padding-inline-start: 1.3em;
+  padding-inline-end: 0.75em;
+}
+
+.loading-message-dots {
+  position: relative;
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 5px;
+  background-color: var(--loading-message-color);
+  color: var(--loading-message-color);
+  animation: loading-message-dots 1s infinite linear alternate;
+  animation-delay: 0.5s;
+}
+
+.loading-message-dots::before,
+.loading-message-dots::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.loading-message-dots::before {
+  inset-inline-start: -0.7em;
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 5px;
+  background-color: var(--loading-message-color);
+  color: var(--loading-message-color);
+  animation: loading-message-dots 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+.loading-message-dots::after {
+  inset-inline-start: 0.7em;
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 5px;
+  background-color: var(--loading-message-color);
+  color: var(--loading-message-color);
+  animation: loading-message-dots 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes loading-message-dots {
+  0% {
+    background-color: var(--loading-message-color);
+  }
+  50%,
+  100% {
+    background-color: var(--loading-message-color-fade);
+  }
+}
+
+/* .message-bubble > p {
+  line-height: inherit;
+} */
+
+.message-bubble > p:first-child,
+.message-bubble > .partial-render-message > p:first-child,
+.html-wrapper > p:first-child {
+  margin-top: 0px;
+}
+
+.message-bubble > p:last-child,
+.message-bubble > .partial-render-message:last-child > p,
+.html-wrapper > p:last-child {
+  margin-bottom: 0px;
+}
+
+/* this is for codeblocks */
+pre {
+  overflow: auto;
+  display: block;
+  word-break: break-all;
+  word-wrap: break-word;
+  border-radius: 7px;
+  background: #2b2b2b;
+  color: #f8f8f2;
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+  padding: 0.6em;
+  font-size: 0.9em;
+  line-height: 1.5em;
+}
+
+.image-message {
+  padding: 0px;
+  display: flex;
+  background-color: #dddddd;
+}
+
+.image-message > *,
+.image-message > * > * {
+  width: 100%;
+  border-radius: 8px;
+  display: flex;
+}
+
+.audio-message {
+  width: 60%;
+  max-width: 300px;
+  height: 2.2em;
+  max-height: 54px;
+  padding: 0px;
+  background-color: unset;
+}
+
+.audio-player {
+  width: 100%;
+  height: 100%;
+}
+
+.audio-player-safari {
+  height: fit-content;
+  width: 40px;
+}
+
+.audio-player-safari-start {
+  float: inline-start;
+}
+
+.audio-player-safari-end {
+  float: inline-end;
+}
+
+.any-file-message {
+  padding: 1px;
+}
+
+.any-file-message-contents {
+  display: flex;
+}
+
+.any-file-message-icon-container {
+  width: 1.3em;
+  min-width: 1.3em;
+  position: relative;
+  border-radius: 4px;
+  margin-inline-start: 6px;
+  margin-inline-end: 2px;
+}
+
+.any-file-message-icon {
+  background-color: white;
+  border-radius: 4px;
+  position: absolute;
+  width: 1em;
+  height: 1.25em;
+  padding: 1px;
+  margin-top: auto;
+  margin-bottom: auto;
+  top: 0;
+  bottom: 0;
+}
+
+.any-file-message-text {
+  padding-top: 5px;
+  overflow-wrap: anywhere;
+  padding-bottom: 5px;
+  padding-inline-end: 7px;
+}
+
+/* If any file message text is a link - inherit the message bubble color */
+.message-bubble > a {
+  color: inherit;
+}
+
+.start-item-position {
+  margin-inline-end: 10px;
+}
+
+.end-item-position {
+  margin-inline-start: 10px;
+}
+
+.role-hidden {
+  display: none;
+}
